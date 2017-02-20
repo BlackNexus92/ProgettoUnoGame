@@ -1,5 +1,7 @@
 package UnoGame;
 
+import java.util.ArrayList;
+
 /**
  * Created by TheNexus on 20/02/17.
  */
@@ -7,5 +9,84 @@ package UnoGame;
 public class GameState {
 
     private Deck deck;
+    private ArrayList<Card> hand;
+    private boolean canPlay = false;
+    private int cardsToDraw = 0;
+
+    public GameState()
+    {
+        deck = new Deck();
+        hand = new ArrayList<Card>();
+        hand.clear();
+    }
+
+    public boolean canPlay() { return canPlay; }
+    public void setCanPlay(boolean c) { canPlay=c; }
+
+    public void setDeck(Deck d) { deck = d; }
+    public Deck getDeck() { return deck; }
+
+    public void setHand(ArrayList<Card> h) { hand = h; }
+    public ArrayList<Card> getHand() { return hand; }
+
+    public void triggerTopCard()
+    {
+        if(!canPlay) return;
+        Card topCard = deck.getTopCard();
+        cardsToDraw = 0;
+        if(topCard.type!=Card.NUMTYPE && topCard.active)
+        {
+            topCard.active = false;
+            if(topCard.type==Card.BLOCKTYPE) { canPlay = false; cardsToDraw = 0;}
+            if(topCard.type==Card.PLUSTWOTYPE) { canPlay = false; cardsToDraw = 2; }
+            if(topCard.type==Card.PLUSFOURTYPE) { canPlay = false; cardsToDraw = 4; }
+        }
+        else if(topCard.type==Card.NUMTYPE && !topCard.existsLegalMove(hand))
+        {
+            cardsToDraw = 1;
+        }
+
+        ArrayList<Card> drawnCards = deck.drawCards(cardsToDraw);
+
+        if(drawnCards.size()<cardsToDraw)
+        {
+            deck.swapDecks();
+            drawnCards.addAll(deck.drawCards(cardsToDraw-drawnCards.size()));
+// BROADCAST MESSAGGIO MAZZI SCAMBIATI
+        }
+
+        hand.addAll(drawnCards);
+        drawnCards.clear();
+
+// BROADCAST MESSAGGIO CARTA DISATTIVATA E CARTE PESCATE O TURNO CONCLUSO
+    }
+
+    public void applyCard(Card c)
+    {
+        if(canPlay && c.isCardCompatible(deck.getTopCard()))
+        {
+            c.active = true;
+            deck.setTopCard(c);
+            canPlay = false;
+/*
+            if(hand.size()==0)
+// BROADCAST MESSAGGIO CARTA GIOCATA E VINCITORE
+            else
+// BROADCAST MESSAGGIO CARTA GIOCATA
+*/
+        }
+    }
+
+    public void pass()
+    {
+        if(canPlay && !deck.getTopCard().existsLegalMove(hand))
+        {
+            canPlay = false;
+
+// BROADCAST MESSAGGIO TURNO PASSATO
+
+        }
+    }
+
 
 }

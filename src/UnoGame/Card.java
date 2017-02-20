@@ -1,5 +1,7 @@
 package UnoGame;
 
+import java.util.ArrayList;
+
 /**
  * Created by TheNexus on 19/02/17.
  */
@@ -25,12 +27,15 @@ public class Card {
     public int color;
     public int number;
     public int type;
+// Determina se la carta e' attiva, ossia il suo effetto deve ancora scatenarsi
+    public boolean active;
 
     public Card()
     {
         color = RED;
         number = 0;
         type = NUMTYPE;
+        active = true;
     }
 
     public Card(int c,int n,int t)
@@ -38,13 +43,22 @@ public class Card {
         color = c;
         number = n;
         type = t;
+        active = true;
     }
 
-// Determina se questa carta (this) puo' essere sovrapposta alla carta b
+// Determina se la carta b puo' essere sovrapposta a questa carta
     public boolean isCardCompatible(Card b)
     {
-        if(this.color==b.color || this.color==COLORLESS) return true;
+        if(this.color==b.color || b.type==Card.PLUSFOURTYPE || b.type==Card.CHANGECOLTYPE) return true;
         if(this.type==NUMTYPE && b.type==NUMTYPE && (this.number==b.number)) return true;
+        return false;
+    }
+
+// Determina se almeno una carta dalla mano di input e' compatibile con quella descritta
+    public boolean existsLegalMove(ArrayList<Card> hand)
+    {
+        for(int i=0;i<hand.size();i++)
+            if(this.isCardCompatible(hand.get(i))) return true;
         return false;
     }
 }

@@ -14,11 +14,13 @@ public class Deck {
 
     private ArrayList<Card> activeDeck;
     private ArrayList<Card> discardedDeck;
+    private Card topCard;
 
     public Deck()
     {
         activeDeck = new ArrayList<Card>();
         discardedDeck = new ArrayList<Card>();
+        topCard = new Card();
         buildDeck();
     }
 
@@ -90,11 +92,22 @@ public class Deck {
         cards.clear();
         if(n<=0 || activeDeck.size()==0) return cards;
         if(activeDeck.size()<n)
-            deckSublist = activeDeck.subList(0,activeDeck.size());
+            deckSublist = activeDeck.subList(0, activeDeck.size());
         else
-            deckSublist = activeDeck.subList(0,n);
+            deckSublist = activeDeck.subList(0, n);
         cards.addAll(deckSublist);
         deckSublist.clear();
         return cards;
+    }
+
+    public Card getTopCard() { return topCard; }
+
+    public void setTopCard(Card c)
+    {
+        if(topCard.isCardCompatible(c))
+        {
+            discardedDeck.add(topCard);
+            topCard=c;
+        }
     }
 }
