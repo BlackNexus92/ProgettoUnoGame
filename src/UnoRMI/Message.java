@@ -12,6 +12,8 @@ public class Message implements Serializable {
     private String uuid;
     /*corpo del messaggio*/
     private Object payload;
+    /*id del player*/
+    private char idPlayer;
 
     public Message(String u, Object o) {
         this.uuid = u;
@@ -34,6 +36,11 @@ public class Message implements Serializable {
         this.payload = payload;
     }
 
+    public char getIdPlayer() {
+        return idPlayer;
+    }
 
-
+    public void setIdPlayer(char idPlayer) {
+        this.idPlayer = idPlayer;
+    }
 }

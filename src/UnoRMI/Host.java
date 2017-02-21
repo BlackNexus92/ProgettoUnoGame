@@ -16,13 +16,13 @@ public class Host implements Serializable {
     private int port;
 
     public Host() {
-        //todo uuid
+        this.uuid = NetworkUtility.getInstance().getRandomUUID();
     }
 
     public Host(String ip, int port) {
         this.ip = ip;
         this.port = port;
-        //todo uuid
+        this.uuid = NetworkUtility.getInstance().getRandomUUID();
     }
 
     public String getUuid() {
