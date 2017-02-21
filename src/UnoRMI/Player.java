@@ -38,9 +38,7 @@ public class Player implements Serializable {
         this.host = host;
     }
 
-    public char getId() {
-        return id;
-    }
+    public char getId() { return id; }
 
     public void setId(char id) {
         this.id = id;

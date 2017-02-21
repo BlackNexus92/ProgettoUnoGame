@@ -29,7 +29,6 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             Player next = r.getNext(current);
             System.out.println("[RING CONFIGURATION] Host "+i+" , ip: "+current.getHost().getIp()+
                     "  ==> next ip: "+next.getHost().getIp());
-
         }
     }
 

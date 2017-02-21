@@ -23,6 +23,7 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
 
     //todo
     public void addPlayer(Player p) throws RemoteException, InterruptedException, ServerNotActiveException {
+        System.out.println("[REGISTRATION] Aggiunto Host IP: "+p.getHost().getIp()+" e PORT:"+p.getHost().getPort());
         p.setId((char) idPlayer );
         idPlayer++;
         this.room.addPlayer(p);
@@ -30,7 +31,7 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
 
         if(this.room.isFull())
         {
-            System.out.println("[REGISTRAZIONE]: room completa, invio message");
+            System.out.println("[REGISTRAZIONE]: Room completa, invio message");
             String uuid = Manager.getInstance().getMyHost().getUuid();
             Manager.getInstance().setRoom(this.room);
             Message m = new Message(uuid,this.room);

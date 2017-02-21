@@ -63,4 +63,19 @@ public class Manager {
     public boolean getIsPlaying() { return this.isPlaying; }
 
     public void setIsPlaying(boolean b) { this.isPlaying = b; }
+
+    public String getIpFromUuid(String u) {
+        for(int i=0; i<this.room.getPlayers().size(); i++) {
+            if(this.room.getPlayers().get(i).getHost().getUuid().equals(u))
+                return this.room.getPlayers().get(i).getHost().getIp();
+        }
+        return null;
+    }
+
+    public void setIdFromUuid() {
+        for(int i=0; i<this.room.getPlayers().size(); i++) {
+            if(this.room.getPlayers().get(i).getHost().getUuid().equals(this.player.getHost().getUuid()))
+                this.player.setId(this.room.getPlayers().get(i).getId());
+        }
+    }
 }
