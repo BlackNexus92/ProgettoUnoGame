@@ -36,15 +36,16 @@ public class GameState {
         cardsToDraw = 0;
         if(topCard.type!=Card.NUMTYPE && topCard.active)
         {
-            topCard.active = false;
             if(topCard.type==Card.BLOCKTYPE) { canPlay = false; cardsToDraw = 0;}
             if(topCard.type==Card.PLUSTWOTYPE) { canPlay = false; cardsToDraw = 2; }
             if(topCard.type==Card.PLUSFOURTYPE) { canPlay = false; cardsToDraw = 4; }
         }
-        else if(topCard.type==Card.NUMTYPE && !topCard.existsLegalMove(hand))
+        if(!topCard.active && !topCard.existsLegalMove(hand))
         {
             cardsToDraw = 1;
         }
+
+        topCard.active = false;
 
         ArrayList<Card> drawnCards = deck.drawCards(cardsToDraw);
 
@@ -63,7 +64,7 @@ public class GameState {
 
     public void applyCard(Card c)
     {
-        if(canPlay && c.isCardCompatible(deck.getTopCard()))
+        if(canPlay && deck.getTopCard().isCardCompatible(c))
         {
             if(!removeCardFromHand(c)) return;
             c.active = true;
@@ -76,11 +77,7 @@ public class GameState {
 // BROADCAST MESSAGGIO CARTA GIOCATA
 */
         }
-    }
-
-    public void pass()
-    {
-        if(canPlay && !deck.getTopCard().existsLegalMove(hand))
+        else if(canPlay && !deck.getTopCard().existsLegalMove(hand))
         {
             canPlay = false;
 

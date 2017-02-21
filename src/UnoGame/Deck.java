@@ -1,5 +1,7 @@
 package UnoGame;
 
+import UnoUI.TextureLoader;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -58,6 +60,7 @@ public class Deck {
             activeDeck.add(buf);
         }
         shuffleDeck(activeDeck);
+        topCard = drawCards(1).get(0);
     }
 
 // Scambia il mazzo attivo con quello scartato
@@ -101,7 +104,7 @@ public class Deck {
         return cards;
     }
 
-    public int getSize() { return activeDeck.size(); }
+    public int size() { return activeDeck.size(); }
 
     public Card getTopCard() { return topCard; }
 
@@ -111,6 +114,7 @@ public class Deck {
         {
             discardedDeck.add(topCard);
             topCard=c;
+            TextureLoader.setTopCardTexture(c);
         }
     }
 }

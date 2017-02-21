@@ -11,11 +11,13 @@ import UnoGame.Card;
  */
 public class TextureLoader {
 
+    private static TextureRegion topCardTex;
     private static Texture deckTex;
     private static int tx;
     private static int ty;
 
     private static Texture bgTex;
+    private static Texture ccTex;
 
     private static BitmapFont pt22font;
 
@@ -52,6 +54,31 @@ public class TextureLoader {
         else if(c.type==Card.NUMTYPE)
             r = new TextureRegion(deckTex,tx*c.number,ty*c.color,tx,ty);
         return r;
+    }
+
+    public static void setTopCardTexture(Card c)
+    {
+        topCardTex = loadCardTexture(c);
+    }
+
+    public static TextureRegion getTopCardTexture()
+    {
+        if(topCardTex==null)
+        {
+            loadCoveredCardTexture();
+            topCardTex = new TextureRegion(ccTex);
+        }
+        return topCardTex;
+    }
+
+    public static Texture loadCoveredCardTexture()
+    {
+        if(ccTex==null)
+        {
+            ccTex = new Texture(Gdx.files.internal("res/coveredCardTexture.png"));
+            ccTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        }
+        return ccTex;
     }
 
     public static Texture loadBGTexture()

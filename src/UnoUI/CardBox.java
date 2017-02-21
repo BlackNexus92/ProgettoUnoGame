@@ -32,6 +32,7 @@ public class CardBox {
         table = new Table();
         table.padLeft(10);
         table.padRight(10);
+        table.setFillParent(true);
         pane = new ScrollPane(table);
         pane.setSize(w,h);
         pane.setX(x);
@@ -39,11 +40,11 @@ public class CardBox {
         stage.addActor(pane);
     }
 
-    public void setSize(float w,float h) { pane.setSize(w,h); }
+    public void setSize(float w,float h) { /*stage.getViewport().setScreenSize((int)w,(int)h);*/ }
 
     public void refreshPane(ArrayList<Card> hand)
     {
-        table.clear();
+        table.clearChildren();
         Image img;
         for(int i=0;i<hand.size();i++)
         {
@@ -59,12 +60,12 @@ public class CardBox {
 
     public Card selectedCard(int x,int y)
     {
-        Actor a = pane.hit(x,y,true);
+        Actor a = stage.hit(x,y,true);
         Card c = null;
         if(a!=null) {
             c = (Card) a.getUserObject();
-            if(c!=null)
-                System.out.println("Num " + c.number + " type " + c.type + " col " + c.color);
+ //           if(c!=null)
+ //               System.out.println("Num " + c.number + " type " + c.type + " col " + c.color);
         }
         return c;
     }
