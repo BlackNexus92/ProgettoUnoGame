@@ -13,7 +13,7 @@ public class Player implements Serializable {
     /*parametri di rete*/
     private Host host;
     /*id univoco del player*/
-    private char id;
+    private int id;
 
     public Player() { }
 
@@ -38,9 +38,7 @@ public class Player implements Serializable {
         this.host = host;
     }
 
-    public char getId() { return id; }
+    public int getId() { return id; }
 
-    public void setId(char id) {
-        this.id = id;
-    }
+    public void setId(int id) { this.id = id; }
 }

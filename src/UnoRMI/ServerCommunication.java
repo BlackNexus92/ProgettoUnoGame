@@ -1,6 +1,9 @@
 package UnoRMI;
 
 import UnoGame.Card;
+import UnoGame.Deck;
+import UnoGame.GameState;
+import com.badlogic.gdx.Game;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -27,7 +30,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             Player current = r.getPlayers().get(i);
             //todo reverse?
             Player next = r.getNext(current);
-            System.out.println("[RING CONFIGURATION] Host "+i+" , ip: "+current.getHost().getIp()+
+            System.out.println("[RING CONFIGURATION] Host "+i+", ip: "+current.getHost().getIp()+
                     "  ==> next ip: "+next.getHost().getIp());
         }
     }
@@ -43,27 +46,52 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         if(!m.getUuid().equals(Manager.getInstance().getMyHost().getUuid()))
             processMessage(m);
         else if(m.getPayload() instanceof Room) {//uuid != my_uuid AND type==Room
-            //todo
             System.out.println("[CONFIGURATION MSG RETURNED] Ring configured!");
+            //todo gameState
+
+            System.out.println("[GAME STATE MSG] Sending game state!");
+
+
+            //todo gui
+
+        }
+        else if(m.getPayload() instanceof GameState) {
+            //todo inizio turno
         }
         else
             System.out.println("[RETURNED MSG] End Ring");
     }
 
     private void processMessage(Message message) {
-        if(message.getPayload() instanceof Room) {//todo
+        if(message.getPayload() instanceof Room) {
             System.out.println("[CONFIGURATION MSG] Ring configured!");
             this.configureRing((Room) message.getPayload());
+            //todo gui
+        }
+        else if(message.getPayload() instanceof GameState) {
+
         }
         else if (message.getPayload() instanceof Card) {
+            System.out.println("[CARD MSG] Played Card: Number: " + ((Card) message.getPayload()).number + " Color: "
+                    + ((Card) message.getPayload()).color + "Type: " + ((Card) message.getPayload()).type);
+
             Card card = (Card) message.getPayload();
             //todo getType e azioni da eseguire
-            if(card.type == 2)
-                System.out.println("[CARD MSG] Played Card: " + (Card)message.getPayload());
+            if(card.active && (card.type == Card.BLOCKTYPE || card.type == Card.PLUSTWOTYPE || card.type == Card.PLUSFOURTYPE))
+                card.active = false;
+            else if(card.active && card.type == Card.CHANGEDIRTYPE)
+                card.active = false;
+            else if(card.active)
+                card.active = false;
+
+            message.setPayload(card);
         }
         else if (message.getPayload() instanceof Player) {//todo
             System.out.println("[PLAYER MSG] Player: ");
             CrashManager.getInstance().repairRing((Player) message.getPayload());
+        }
+        else if(message.getPayload() instanceof Deck) {
+
         }
 
         try{
@@ -86,6 +114,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             nextPlayer = Manager.getInstance().getRoom().getNext(myPlayer);
         else
             nextPlayer = Manager.getInstance().getRoom().getPrevious(myPlayer);
+
         Registry register = null;
 
         try{

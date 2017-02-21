@@ -20,12 +20,11 @@ public class Manager {
     /*Indica se il player sta giocando*/
     private boolean isPlaying;
 
-    //todo aggiungere variabili e metodi getIpFromUuid
+    //todo aggiungere variabili?
 
     public static Manager getInstance() {
-        if(instance == null) {
+        if(instance == null)
             instance = new Manager();
-        }
         return instance;
     }
 
