@@ -33,17 +33,27 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
     }
 
     public void send(Message m) throws RemoteException {
+        try{
+            System.out.println("[MSG RECEIVED] Msg from :" + Manager.getInstance().getIpFromUuid(m.getUuid()) +
+                    "  -  type:"+ m.getPayload().getClass());
+        } catch (Exception e) {
+            System.out.println("[MSG RECEIVED] Msg from UUID:" + m.getUuid());
+        }
+
         if(!m.getUuid().equals(Manager.getInstance().getMyHost().getUuid()))
             processMessage(m);
         else if(m.getPayload() instanceof Room) {//uuid != my_uuid AND type==Room
             //todo
+            System.out.println("[CONFIGURATION MSG RETURNED] Ring configured!");
         }
         else
-            System.out.println("[RETURNED MSG] ");
+            System.out.println("[RETURNED MSG] End Ring");
     }
 
     private void processMessage(Message message) {
         if(message.getPayload() instanceof Room) {//todo
+            System.out.println("[CONFIGURATION MSG] Ring configured!");
+            this.configureRing((Room) message.getPayload());
         }
         else if (message.getPayload() instanceof Card) {
             Card card = (Card) message.getPayload();
@@ -52,7 +62,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
                 System.out.println("[CARD MSG] Played Card: " + (Card)message.getPayload());
         }
         else if (message.getPayload() instanceof Player) {//todo
-            System.out.println("[PLAYER MSG]");
+            System.out.println("[PLAYER MSG] Player: ");
             CrashManager.getInstance().repairRing((Player) message.getPayload());
         }
 

@@ -23,8 +23,9 @@ public class Manager {
     //todo aggiungere variabili e metodi getIpFromUuid
 
     public static Manager getInstance() {
-        if(instance == null)
-            return new Manager();
+        if(instance == null) {
+            instance = new Manager();
+        }
         return instance;
     }
 
