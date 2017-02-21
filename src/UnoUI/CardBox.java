@@ -63,8 +63,8 @@ public class CardBox {
         Card c = null;
         if(a!=null) {
             c = (Card) a.getUserObject();
-    //        if(c!=null)
-    //            System.out.println("Num " + c.number + " type " + c.type + " col " + c.color);
+            if(c!=null)
+                System.out.println("Num " + c.number + " type " + c.type + " col " + c.color);
         }
         return c;
     }
