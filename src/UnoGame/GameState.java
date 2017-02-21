@@ -65,6 +65,7 @@ public class GameState {
     {
         if(canPlay && c.isCardCompatible(deck.getTopCard()))
         {
+            if(!removeCardFromHand(c)) return;
             c.active = true;
             deck.setTopCard(c);
             canPlay = false;
@@ -86,6 +87,17 @@ public class GameState {
 // BROADCAST MESSAGGIO TURNO PASSATO
 
         }
+    }
+
+    private boolean removeCardFromHand(Card c)
+    {
+        for(int i=0;i<hand.size();i++)
+            if(c==hand.get(i))
+            {
+                hand.remove(i);
+                return true;
+            }
+        return false;
     }
 
 

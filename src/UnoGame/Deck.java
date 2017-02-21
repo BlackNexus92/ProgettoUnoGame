@@ -49,6 +49,7 @@ public class Deck {
                 buf = new Card(j,0,Card.CHANGEDIRTYPE);
                 activeDeck.add(buf);
                 buf = new Card(j,0,Card.PLUSTWOTYPE);
+                activeDeck.add(buf);
             }
 // Aggiungo le carte wild non colorate, quattro per ogni tipo
             buf = new Card(Card.COLORLESS,0,Card.CHANGECOLTYPE);
@@ -99,6 +100,8 @@ public class Deck {
         deckSublist.clear();
         return cards;
     }
+
+    public int getSize() { return activeDeck.size(); }
 
     public Card getTopCard() { return topCard; }
 

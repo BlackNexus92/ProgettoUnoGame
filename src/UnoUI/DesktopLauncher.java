@@ -10,8 +10,8 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 public class DesktopLauncher {
 
-    public static int resX = 1280;
-    public static int resY = 720;
+    public static int resX = 1024;
+    public static int resY = 768;
 
     public static void main (String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
