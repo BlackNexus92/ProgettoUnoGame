@@ -13,7 +13,7 @@ public class CrashManager {
 
     public static CrashManager getInstance() {
         if(instance == null)
-            return new CrashManager();
+            instance = new CrashManager();
         return instance;
     }
 

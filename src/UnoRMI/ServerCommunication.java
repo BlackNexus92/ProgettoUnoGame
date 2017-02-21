@@ -67,7 +67,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         }
 
         try{
-            this.getNextHostInterface();
+            this.getNextHostInterface().send(message);
         } catch (NotBoundException e) {
             System.out.println("# NOT BOUND EXCEPTION # in ServerCommunication.processMessage ");
         } catch (RemoteException e) {
@@ -82,7 +82,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         Player myPlayer = Manager.getInstance().getMyPlayer();
         //todo scegliere next o previous
         Player nextPlayer;
-        if(true)
+        if(true/*reverse*/)
             nextPlayer = Manager.getInstance().getRoom().getNext(myPlayer);
         else
             nextPlayer = Manager.getInstance().getRoom().getPrevious(myPlayer);

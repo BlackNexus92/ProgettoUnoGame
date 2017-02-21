@@ -13,7 +13,7 @@ public class NetworkUtility {
 
     public static NetworkUtility getInstance() {
         if(instance == null)
-            return new NetworkUtility();
+            instance = new NetworkUtility();
         return instance;
     }
 
