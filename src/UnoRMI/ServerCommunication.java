@@ -6,6 +6,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 
 /**
@@ -18,14 +19,28 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
 
     public ServerCommunication() throws RemoteException { }
 
+    private void configureRing(Room room) {
+        Manager.getInstance().setRoom(room);
+        Room r = Manager.getInstance().getRoom();
+
+        for(int i=0; i<r.getCurrentPlayers(); i++) {
+            Player current = r.getPlayers().get(i);
+            //todo reverse?
+            Player next = r.getNext(current);
+            System.out.println("[RING CONFIGURATION] Host "+i+" , ip: "+current.getHost().getIp()+
+                    "  ==> next ip: "+next.getHost().getIp());
+
+        }
+    }
+
     public void send(Message m) throws RemoteException {
         if(!m.getUuid().equals(Manager.getInstance().getMyHost().getUuid()))
             processMessage(m);
-        else if(m.getPayload() instanceof Room) {//uuid != my_uuid AND type=Room
+        else if(m.getPayload() instanceof Room) {//uuid != my_uuid AND type==Room
             //todo
         }
         else
-            System.out.println("[MSG RRETURNED] ");
+            System.out.println("[RETURNED MSG] ");
     }
 
     private void processMessage(Message message) {
@@ -33,36 +48,44 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         }
         else if (message.getPayload() instanceof Card) {
             Card card = (Card) message.getPayload();
+            //todo getType e azioni da eseguire
+            if(card.type == 2)
+                System.out.println("[CARD MSG] Played Card: " + (Card)message.getPayload());
         }
-        else if (message.getPayload() instanceof Player) {
+        else if (message.getPayload() instanceof Player) {//todo
+            System.out.println("[PLAYER MSG]");
+            CrashManager.getInstance().repairRing((Player) message.getPayload());
         }
 
         try{
-            //todo boolean per vedere se giro è invertito
             this.getNextHostInterface();
         } catch (NotBoundException e) {
             System.out.println("# NOT BOUND EXCEPTION # in ServerCommunication.processMessage ");
         } catch (RemoteException e) {
             System.out.println("# REMOTE EXCEPTION # in ServerCommunication.processMessage ");
+        } catch (ServerNotActiveException e) {
+            System.out.println("# SERVER NOT ACTIVE EXCEPTION # in ServerCommunication.processMessage");
         }
     }
 
-    public InterfaceCommunication getNextHostInterface() throws RemoteException, NotBoundException {
+    public InterfaceCommunication getNextHostInterface() throws RemoteException, ServerNotActiveException, NotBoundException {
         InterfaceCommunication remote = null;
         Player myPlayer = Manager.getInstance().getMyPlayer();
         //todo scegliere next o previous
-        Player nextPlayer = Manager.getInstance().getRoom().getNext(myPlayer);
-//        Player previousPlayer = Manager.getInstance().getRoom().getPrevious(myPlayer);
+        Player nextPlayer;
+        if(true)
+            nextPlayer = Manager.getInstance().getRoom().getNext(myPlayer);
+        else
+            nextPlayer = Manager.getInstance().getRoom().getPrevious(myPlayer);
         Registry register = null;
 
         try{
             register = LocateRegistry.getRegistry(nextPlayer.getHost().getIp(), PORT);
-            //register = LocateRegistry.getRegistry(previousPlayer.getHost().getIp(), PORT);
-            remote = (InterfaceCommunication) register.lookup("a"); //todo
+            remote = (InterfaceCommunication) register.lookup("Communication"); //todo
         } catch (RemoteException e) {
             System.out.println("# REMOTE EXCEPTION # in ServerCommunication.getNextHostInterface ");
             //todo crashManager
-
+            return CrashManager.getInstance().repairCrash(nextPlayer);
         } catch (Exception e) {
             System.out.println("# EXCEPTION # in ServerCommunication.getNextHostInterface ");
             e.printStackTrace();

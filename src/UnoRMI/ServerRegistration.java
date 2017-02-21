@@ -1,6 +1,8 @@
 package UnoRMI;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 
 /**
@@ -14,16 +16,18 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
     /*serve per creare id dei player*/
     private int idPlayer = 1;
 
-    public ServerRegistration(int n, Player p) throws RemoteException {
+    public ServerRegistration(int n, Player p) throws RemoteException, InterruptedException, ServerNotActiveException {
         this.room = new Room(n);
         this.addPlayer(p);
     }
 
     //todo
-    public void addPlayer(Player p) throws RemoteException {
+    public void addPlayer(Player p) throws RemoteException, InterruptedException, ServerNotActiveException {
         p.setId((char) idPlayer );
         idPlayer++;
         this.room.addPlayer(p);
+        //		Controller.getInstance().getStartPanel().informServerHostRegistred(this.room);
+
         if(this.room.isFull())
         {
             System.out.println("[REGISTRAZIONE]: room completa, invio message");
@@ -31,10 +35,13 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
             Manager.getInstance().setRoom(this.room);
             Message m = new Message(uuid,this.room);
             try {
-                Manager.getInstance().getCommunication().send(m);
+                Manager.getInstance().getCommunication().getNextHostInterface().send(m);
             } catch (RemoteException e) {
                 System.out.println("# REMOTE EXCEPTION # in ServerRegistration.addPlayer ");
+            } catch (NotBoundException e) {
+                System.out.println("# NOT BOUND EXCEPTION # in ServerRegistration.addPlayer ");
             }
+
         }
     }
 

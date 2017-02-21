@@ -1,11 +1,13 @@
 package UnoRMI;
 
+import UnoGame.GameState;
+
 /**
  * Created by angelo on 20/02/17.
  */
 public class Manager {
 
-    /*singleton della classe Manager*/
+    /*Singleton della classe Manager*/
     private static Manager instance;
     /*Room attiva*/
     private Room room;
@@ -13,6 +15,10 @@ public class Manager {
     private ServerCommunication communication;
     /*Player*/
     private Player player;
+    /**/
+    private GameState gameState;
+    /*Indica se il player sta giocando*/
+    private boolean isPlaying;
 
     //todo aggiungere variabili e metodi getIpFromUuid
 
@@ -50,5 +56,11 @@ public class Manager {
         this.communication = c;
     }
 
+    public GameState getGameState() { return this.gameState; }
 
+    public void setGameState(GameState g) { this.gameState = g; }
+
+    public boolean getIsPlaying() { return this.isPlaying; }
+
+    public void setIsPlaying(boolean b) { this.isPlaying = b; }
 }
