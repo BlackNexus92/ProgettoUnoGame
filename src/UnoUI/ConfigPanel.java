@@ -185,7 +185,7 @@ public class ConfigPanel implements ChangeListener, ActionListener {
         if (checkErrors()) {
             connectButton.setEnabled(false);
 
-//            try {
+            try {
 
                 setUsername(usernameField.getText());
                 if (serverCheckBox.isSelected()) {
@@ -240,13 +240,10 @@ public class ConfigPanel implements ChangeListener, ActionListener {
                     setServerIP(ipField.getText());
                 }
 
+                DesktopLauncher.connect(this);
 
 
-//DA MODIFICARE
-                //StartPlay.connect(this);
-
-
-          /*} catch (RemoteException e1) {
+            } catch (RemoteException e1) {
                e1.printStackTrace();
             } catch (UnknownHostException e1) {
                 e1.printStackTrace();
@@ -260,7 +257,7 @@ public class ConfigPanel implements ChangeListener, ActionListener {
                 e1.printStackTrace();
             } catch (ServerNotActiveException e1) {
                 e1.printStackTrace();
-            }*/
+            }
         }
     }
 

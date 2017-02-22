@@ -133,7 +133,7 @@ public class Deck {
         {
             discardedDeck.add(topCard);
             topCard=c;
-            TextureLoader.setTopCardTexture(c);
+            TextureLoader.setChanged();
         }
     }
 }

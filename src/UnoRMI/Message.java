@@ -7,6 +7,13 @@ import java.io.Serializable;
  */
 public class Message implements Serializable {
 
+    public static final int MOVE = 0;
+    public static final int PASS = 1;
+    public static final int SHUFFLE = 2;
+    public static final int WIN = 3;
+    public static final int TURN = 4;
+
+
     private static final long serialVersionUID = 1L;
     /*mittente del messaggio*/
     private String uuid;
@@ -14,6 +21,10 @@ public class Message implements Serializable {
     private Object payload;
     /*id del player*/
     private char idPlayer;
+
+    public int type;
+
+    public int drawnCards;
 
     public Message(String u, Object o) {
         this.uuid = u;

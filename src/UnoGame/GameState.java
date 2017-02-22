@@ -13,6 +13,7 @@ public class GameState {
     private Deck deck;
     private ArrayList<Card> hand;
     private boolean canPlay = false;
+    private boolean hasTurn = false;
     private int cardsToDraw = 0;
 
     public GameState()
@@ -22,8 +23,8 @@ public class GameState {
         hand.clear();
     }
 
-    public boolean canPlay() { return canPlay; }
-    public void setCanPlay(boolean c) { canPlay=c; }
+    public boolean hasTurn() { return hasTurn; }
+    public void setTurn(boolean t) { canPlay=t; hasTurn=t; }
 
     public void setDeck(Deck d) { deck = d; }
     public Deck getDeck() { return deck; }
@@ -69,7 +70,7 @@ public class GameState {
         }
 
         hand.addAll(drawnCards);
-        TextureLoader.getCardBox().refreshPane(hand);
+        TextureLoader.setChanged();
         drawnCards.clear();
     }
 
@@ -82,16 +83,18 @@ public class GameState {
             c.active = true;
             deck.setTopCard(c);
             canPlay = false;
+            hasTurn = false;
 /*
             if(hand.size()==0)
 // BROADCAST MESSAGGIO CARTA GIOCATA E VINCITORE
             else
-// BROADCAST MESSAGGIO CARTA GIOCATA
+// BROADCAST MESSAGGIO CARTA GIOCATA E CARTE PESCATE
 */
         }
         else if(!canPlay || !deck.getTopCard().existsLegalMove(hand))
         {
             canPlay = false;
+            hasTurn = false;
 
 // BROADCAST MESSAGGIO TURNO PASSATO E CARTE PESCATE
 

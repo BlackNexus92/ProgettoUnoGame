@@ -18,6 +18,7 @@ public class TextureLoader {
 
     private static Texture bgTex;
     private static Texture ccTex;
+    private static boolean hasChanged = false;
 
     private static BitmapFont pt22font;
 
@@ -33,6 +34,20 @@ public class TextureLoader {
     private static final int plusfourY = 2;
     private static final int numRows = 4;
     private static final int numCols = 14;
+
+
+    public synchronized static void setChanged() { hasChanged=true; }
+
+    public synchronized static boolean hasChanged()
+    {
+        if(hasChanged==true)
+        {
+            hasChanged=false;
+            return true;
+        }
+        else
+            return false;
+    }
 
     public static TextureRegion loadCardTexture(Card c)
     {

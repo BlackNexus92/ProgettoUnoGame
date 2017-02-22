@@ -79,6 +79,7 @@ public class UnoUIMain implements Screen {
         manager = Manager.getInstance();
         gamestate = manager.getGameState();
         TextureLoader.setTopCardTexture(gamestate.getDeck().getTopCard());
+        topCardSprite.setRegion(TextureLoader.getTopCardTexture());
 
         cardBox = TextureLoader.getCardBox();
         cardBox.refreshPane(gamestate.getHand());
@@ -120,7 +121,12 @@ public class UnoUIMain implements Screen {
 
     @Override
     public void render(float delta) {
-        topCardSprite.setRegion(TextureLoader.getTopCardTexture());
+        if(TextureLoader.hasChanged())
+        {
+            TextureLoader.setTopCardTexture(gamestate.getDeck().getTopCard());
+            topCardSprite.setRegion(TextureLoader.getTopCardTexture());
+            cardBox.refreshPane(gamestate.getHand());
+        }
         processInput();
         Gdx.gl.glClearColor(0.6f, 0.2f, 0.0f, 1.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -150,7 +156,7 @@ public class UnoUIMain implements Screen {
         int y = Gdx.graphics.getHeight() - Gdx.input.getY();
 
 // DA CAMBIARE CON INDICATORE DI TURNO
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && gamestate.canPlay() && delta - lastClick > 250) {
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && gamestate.hasTurn() && delta - lastClick > 250) {
             lastClick = delta;
             if (choosingColor) {
                 if (y >= 0 && y < cardBoxH) {
@@ -171,7 +177,6 @@ public class UnoUIMain implements Screen {
             gamestate.applyCard(chosenCard);
             chosenCard = null;
             choosingColor = false;
-            cardBox.refreshPane(gamestate.getHand());
         }
     }
 
