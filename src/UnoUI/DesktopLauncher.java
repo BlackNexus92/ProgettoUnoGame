@@ -84,7 +84,7 @@ public class DesktopLauncher {
             bootGUI();
             int nPlayers = sp.getNPlayers();
             String username = sp.getUsername();
-            Host myHost = new Host(NetworkUtility.getInstance().getHostAddress(), 1234);
+            Host myHost = new Host(NetworkUtility.getInstance().getHostAddress(), PORT);
             Player myPlayer = new Player(username, myHost);
             Manager.getInstance().setMyPlayer(myPlayer);
             startDeamon();
@@ -98,7 +98,7 @@ public class DesktopLauncher {
             Registry register = LocateRegistry.getRegistry(IP, PORT);
             registrationServer = (InterfaceRegistration) register.lookup("RegistrationService");
             String username = sp.getUsername();
-            Host myHost = new Host(NetworkUtility.getInstance().getHostAddress(), 1234);
+            Host myHost = new Host(NetworkUtility.getInstance().getHostAddress(), PORT);
             Player myPlayer = new Player(username, myHost);
             Manager.getInstance().setMyPlayer(myPlayer);
             registrationServer.addPlayer(myPlayer);
