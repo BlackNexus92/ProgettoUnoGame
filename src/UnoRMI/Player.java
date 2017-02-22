@@ -15,16 +15,22 @@ public class Player implements Serializable {
     /*id univoco del player*/
     private int id;
 
+    private int nCards;
+
     public Player() { }
 
     public Player(String username, Host host) {
         this.username = username;
         this.host = host;
+        this.nCards = 7;
     }
 
     public String getUsername() {
         return username;
     }
+
+    public int getnCards() { return nCards; }
+    public void setnCards(int n) { nCards = n; }
 
     public void setUsername(String username) {
         this.username = username;
