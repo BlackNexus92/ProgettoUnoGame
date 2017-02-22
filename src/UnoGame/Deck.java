@@ -13,6 +13,7 @@ import java.util.Random;
 public class Deck {
 
     public static final int DECKSIZE = 108;
+    public static final int HANDSIZE = 7;
 
     private ArrayList<Card> activeDeck;
     private ArrayList<Card> discardedDeck;

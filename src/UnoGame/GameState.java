@@ -31,6 +31,16 @@ public class GameState {
     public void setHand(ArrayList<Card> h) { hand = h; }
     public ArrayList<Card> getHand() { return hand; }
 
+    public void initializeHand(int id,int nPlayers)
+    {
+        if(id<0 || id>15 || id>nPlayers || nPlayers>15) return;
+        hand.clear();
+        int i;
+        for(i=0;i<id;i++) deck.drawCards(Deck.HANDSIZE);
+        hand.addAll(deck.drawCards(Deck.HANDSIZE));
+        for(i=id+1;i<nPlayers;i++) deck.drawCards(Deck.HANDSIZE);
+    }
+
     public void triggerTopCard()
     {
         if(!canPlay) return;
@@ -84,6 +94,16 @@ public class GameState {
 
 // BROADCAST MESSAGGIO TURNO PASSATO E CARTE PESCATE
 
+        }
+    }
+
+    public void applyCardOtherPlayer(Card c)
+    {
+        if(c==null) return;
+        if(deck.getTopCard().isCardCompatible(c))
+        {
+            c.active = true;
+            deck.setTopCard(c);
         }
     }
 
