@@ -14,6 +14,7 @@ public class GameState {
     private ArrayList<Card> hand;
     private boolean canPlay = false;
     private boolean hasTurn = false;
+    private boolean reverse = false;
     private int cardsToDraw = 0;
 
     public GameState()
@@ -22,6 +23,9 @@ public class GameState {
         hand = new ArrayList<Card>();
         hand.clear();
     }
+
+    public boolean getReverse() { return reverse; }
+    public void setReverse(boolean r) { reverse = r; }
 
     public boolean hasTurn() { return hasTurn; }
     public void setTurn(boolean t) { canPlay=t; hasTurn=t; }
@@ -84,6 +88,7 @@ public class GameState {
             deck.setTopCard(c);
             canPlay = false;
             hasTurn = false;
+            if(c.type==Card.CHANGEDIRTYPE) reverse = !reverse;
 /*
             if(hand.size()==0)
 // BROADCAST MESSAGGIO CARTA GIOCATA E VINCITORE
