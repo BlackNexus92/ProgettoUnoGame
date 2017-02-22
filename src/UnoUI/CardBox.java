@@ -40,7 +40,8 @@ public class CardBox {
         stage.addActor(pane);
     }
 
-    public void setSize(float w,float h) { /*stage.getViewport().setScreenSize((int)w,(int)h);*/ }
+    public void setSize(float w,float h) { stage.getViewport().setScreenSize((int)w,(int)h); }
+    public void setXY(float x,float y) { pane.setX(x); pane.setY(y); }
 
     public void refreshPane(ArrayList<Card> hand)
     {

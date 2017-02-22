@@ -1,5 +1,7 @@
 package UnoGame;
 
+import UnoUI.TextureLoader;
+
 import java.util.ArrayList;
 
 /**
@@ -58,12 +60,11 @@ public class GameState {
 
         hand.addAll(drawnCards);
         drawnCards.clear();
-
-// BROADCAST MESSAGGIO CARTA DISATTIVATA E CARTE PESCATE O TURNO CONCLUSO
     }
 
     public void applyCard(Card c)
     {
+        if(c==null) return;
         if(canPlay && deck.getTopCard().isCardCompatible(c))
         {
             if(!removeCardFromHand(c)) return;
@@ -77,11 +78,11 @@ public class GameState {
 // BROADCAST MESSAGGIO CARTA GIOCATA
 */
         }
-        else if(canPlay && !deck.getTopCard().existsLegalMove(hand))
+        else if(!canPlay || !deck.getTopCard().existsLegalMove(hand))
         {
             canPlay = false;
 
-// BROADCAST MESSAGGIO TURNO PASSATO
+// BROADCAST MESSAGGIO TURNO PASSATO E CARTE PESCATE
 
         }
     }

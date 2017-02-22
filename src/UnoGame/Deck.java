@@ -60,7 +60,7 @@ public class Deck {
             activeDeck.add(buf);
         }
         shuffleDeck(activeDeck);
-        topCard = drawCards(1).get(0);
+        findTopCard(activeDeck);
     }
 
 // Scambia il mazzo attivo con quello scartato
@@ -70,6 +70,24 @@ public class Deck {
         activeDeck = discardedDeck;
         discardedDeck = temp;
         shuffleDeck(activeDeck);
+    }
+
+    private void findTopCard(ArrayList<Card> deck)
+    {
+        Card top;
+        int i=0;
+        if(deck.size()==0) {topCard=null; return;}
+        do {
+            top = deck.get(i);
+            i++;
+        }
+        while(top.type!=Card.NUMTYPE && i<deck.size());
+        if(top.type==Card.NUMTYPE) {
+            topCard = top;
+            deck.remove(i - 1);
+        }
+        else
+            topCard = null;
     }
 
 // Mescola il mazzo di carte

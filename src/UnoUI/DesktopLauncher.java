@@ -9,6 +9,8 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import UnoRMI.Manager;
 import UnoGame.GameState;
 
+import java.text.ParseException;
+
 
 public class DesktopLauncher {
 
@@ -16,6 +18,16 @@ public class DesktopLauncher {
     public static int resY = 768;
 
     public static void main (String[] arg) {
+
+        ConfigPanel sp;
+        try { sp = new ConfigPanel(); }
+        catch (ParseException e) {e.printStackTrace();}
+ //       Manager.getInstance().setStartPanel(sp);
+        bootGUI();
+    }
+
+    public static void bootGUI()
+    {
 // DA ELIMINARE
         Manager m = Manager.getInstance();
         GameState g = new GameState();
@@ -31,4 +43,5 @@ public class DesktopLauncher {
         config.fullscreen = false;
         new LwjglApplication(new UnoUIContext(), config);
     }
+
 }

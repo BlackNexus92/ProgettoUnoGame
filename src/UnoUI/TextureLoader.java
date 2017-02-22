@@ -21,13 +21,16 @@ public class TextureLoader {
 
     private static BitmapFont pt22font;
 
+    private static CardBox cardBox;
+    public static final int cardBoxW = 1024;
+    public static final int cardBoxH = 210;
+
     private static final int blockX = 10;
     private static final int reverseX = 11;
     private static final int plustwoX = 12;
     private static final int wildX = 13;
     private static final int colchangeY = 0;
     private static final int plusfourY = 2;
-
     private static final int numRows = 4;
     private static final int numCols = 14;
 
@@ -101,12 +104,21 @@ public class TextureLoader {
         return pt22font;
     }
 
+    public static CardBox getCardBox() {
+        if(cardBox==null) {
+            cardBox = new CardBox(0, 0, cardBoxW, cardBoxH);
+        }
+        return cardBox;
+    }
+
     public static void dispose()
     {
         deckTex.dispose();
         bgTex.dispose();
         pt22font.dispose();
+        cardBox.dispose();
 
+        cardBox=null;
         deckTex=null;
         bgTex=null;
         pt22font=null;

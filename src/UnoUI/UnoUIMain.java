@@ -17,6 +17,8 @@ import UnoGame.GameState;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import UnoGame.Card;
 
+import java.util.ArrayList;
+
 public class UnoUIMain implements Screen {
 
     private SpriteBatch batch;
@@ -34,22 +36,19 @@ public class UnoUIMain implements Screen {
 
     private Manager manager;
     private GameState gamestate;
+
     private CardBox cardBox;
+    private int cardBoxW;
+    private int cardBoxH;
 
     private Card chosenCard;
     private boolean choosingColor;
-
-    private static final int cardBoxW = 1024;
-    private static final int cardBoxH = 210;
 
     private static final float topCardW = 133;
     private static final float topCardH = 200;
 
     private static final float cardW = 106;
     private static final float cardH = 160;
-    private static final float circleCenterX = 512;
-    private static final float circleCenterY = 330;
-    private static final float circleR = 360;
 
     private float delta;
     private float lastClick;
@@ -81,32 +80,35 @@ public class UnoUIMain implements Screen {
         gamestate = manager.getGameState();
         TextureLoader.setTopCardTexture(gamestate.getDeck().getTopCard());
 
-        cardBox = new CardBox(0, 0, cardBoxW, cardBoxH);
+        cardBox = TextureLoader.getCardBox();
+        cardBox.refreshPane(gamestate.getHand());
+        cardBoxW = TextureLoader.cardBoxW;
+        cardBoxH = TextureLoader.cardBoxH;
 
         delta = 0;
         lastClick = 0;
     }
 
     @Override
-    public void pause() {
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-    }
+    public void resume() {}
 
+    @Override
+    public void hide() {}
+
+    @Override
+    public void show() {}
+
+    @Override
     public void dispose() {
         shaperenderer.dispose();
         batch.dispose();
         TextureLoader.dispose();
     }
 
-    public void hide() {
-    }
-
-    public void show() {
-    }
-
+    @Override
     public void resize(int x, int y) {
         float sx = (float) x / DesktopLauncher.resX;
         float sy = (float) y / DesktopLauncher.resY;
@@ -114,8 +116,6 @@ public class UnoUIMain implements Screen {
         camera.setToOrtho(false);
         camera.update();
         batch.setProjectionMatrix(camera.combined.scale(sx, sy, 1));
-        cardBox.setSize(sx * cardBoxW, sy * cardBoxH);
-        cardBox.refreshPane(gamestate.getHand());
     }
 
     @Override
@@ -139,6 +139,7 @@ public class UnoUIMain implements Screen {
         drawColorSignal(shaperenderer);
         if (choosingColor)
             drawColorChooser(shaperenderer);
+        drawTurnHighlight(shaperenderer);
         shaperenderer.end();
         Gdx.gl.glDisable(Gdx.gl20.GL_BLEND);
     }
@@ -147,6 +148,8 @@ public class UnoUIMain implements Screen {
         delta += 1000 * Gdx.graphics.getDeltaTime();
         int x = Gdx.input.getX();
         int y = Gdx.graphics.getHeight() - Gdx.input.getY();
+
+// DA CAMBIARE CON INDICATORE DI TURNO
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && gamestate.canPlay() && delta - lastClick > 250) {
             lastClick = delta;
             if (choosingColor) {
@@ -216,6 +219,22 @@ public class UnoUIMain implements Screen {
             {
                 cardSprite.setPosition(xc-cardSprite.getWidth()/2 + 7,yc-cardSprite.getHeight()/2 + 7);
                 cardSprite.draw(batch);
+            }
+        }
+    }
+
+    private void drawTurnHighlight(ShapeRenderer sr)
+    {
+        int nPlayers = 6;
+        float xc,yc;
+        for(int i=0;i<nPlayers;i++)
+        {
+            if(i==3)
+            {
+                xc = 75 + 874*i/(nPlayers-1);
+                yc = 650;
+                sr.setColor(0.5f,0.5f,0.5f,0.6f);
+                sr.rect(xc-5-cardSprite.getWidth()/2,yc-cardSprite.getHeight()/2,cardSprite.getWidth()+15,cardSprite.getHeight()+10);
             }
         }
     }
