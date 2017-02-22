@@ -9,5 +9,5 @@ import java.rmi.server.ServerNotActiveException;
  */
 public interface InterfaceCommunication extends Remote {
 
-    void send(Message m) throws RemoteException;
+    void send(Message m) throws RemoteException, ServerNotActiveException;
 }

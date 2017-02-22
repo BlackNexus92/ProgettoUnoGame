@@ -19,7 +19,7 @@ public class CrashManager {
 
     /*ripara crash notificando gli altri host e riparando ring e GUI*/
     public InterfaceCommunication repairCrash(Player p) throws NotBoundException, ServerNotActiveException, RemoteException {
-        System.out.println("[CRASH MANAGER] Host " + p.getHost().getIp() + " è andato in crash!");
+        System.out.println("[CRASH MANAGER] Host " + p.getHost().getIp() + " crashed!");
         Manager.getInstance().getRoom().removePlayer(p);
         //todo Manager.getInstance().getGUI.refreshGui
         String uuid = Manager.getInstance().getMyHost().getUuid();
@@ -32,7 +32,7 @@ public class CrashManager {
 
     /*riceve notifica del crash e ripara ring e GUI*/
     public void repairRing(Player p) {
-        System.out.println("[CRASH NOTIFICATO] Host " + p.getHost().getIp() + " è andato in crash!");
+        System.out.println("[CRASH NOTIFIED] Host " + p.getHost().getIp() + " crashed!");
         Manager.getInstance().getRoom().removePlayer(p);
         //todo Manager.getInstance().getGUI.refreshGui
     }
