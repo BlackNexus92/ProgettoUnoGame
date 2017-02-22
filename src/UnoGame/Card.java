@@ -1,12 +1,15 @@
 package UnoGame;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by TheNexus on 19/02/17.
  */
 
-public class Card {
+public class Card implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
 // Attributi di tipo relativi alle carte
     public static final int NUMTYPE = 0;
