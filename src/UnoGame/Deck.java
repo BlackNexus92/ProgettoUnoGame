@@ -2,6 +2,7 @@ package UnoGame;
 
 import UnoUI.TextureLoader;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -10,7 +11,7 @@ import java.util.Random;
  * Created by TheNexus on 20/02/17.
  */
 
-public class Deck {
+public class Deck implements Serializable {
 
     public static final int DECKSIZE = 108;
     public static final int HANDSIZE = 7;

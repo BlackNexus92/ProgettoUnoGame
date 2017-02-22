@@ -12,6 +12,7 @@ public class Message implements Serializable {
     public static final int SHUFFLE = 2;
     public static final int WIN = 3;
     public static final int TURN = 4;
+    public static final int ROOM = 5;
 
 
     private static final long serialVersionUID = 1L;

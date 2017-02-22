@@ -101,7 +101,7 @@ public class DesktopLauncher {
             Host myHost = new Host(NetworkUtility.getInstance().getHostAddress(), PORT);
             Player myPlayer = new Player(username, myHost);
             Manager.getInstance().setMyPlayer(myPlayer);
-            registrationServer.addPlayer(myPlayer);
+            Manager.getInstance().setGameState(registrationServer.addPlayer(myPlayer));
             System.out.println("[HOST REGISTRED]");
         }
     }
