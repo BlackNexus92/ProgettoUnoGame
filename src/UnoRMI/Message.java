@@ -9,7 +9,8 @@ public class Message implements Serializable {
 
     public static final int MOVE = 0;
     public static final int PASS = 1;
-    public static final int SHUFFLE = 2;
+    public static final int SHUFFLEPASS = 2;
+    public static final int SHUFFLEMOVE = 8;
     public static final int WIN = 3;
     public static final int TURN = 4;
     public static final int ROOM = 5;
