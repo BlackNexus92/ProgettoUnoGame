@@ -59,6 +59,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             Manager.getInstance().getGameState().setTurn(true);
             toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(), Manager.getInstance().getMyHost().getUuid());
             toSendMsg.type = Message.TURN;
+            //ss
         }
         else if(m.type == Message.PLAYER) {
             System.out.println("[RETURNED PLAYER MSG] Crashed player removed from Ring!");
