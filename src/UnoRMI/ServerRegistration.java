@@ -37,7 +37,7 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
 
         if(this.room.isFull())
         {
-            System.out.println("[REGISTRAZIONE]: Room is full, send configuration message");
+            System.out.println("[REGISTRATION]: Room is full, send configuration message");
             String uuid = Manager.getInstance().getMyHost().getUuid();
             Manager.getInstance().setRoom(this.room);
             //todo
