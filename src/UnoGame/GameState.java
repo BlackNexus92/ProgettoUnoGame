@@ -69,6 +69,7 @@ public class GameState {
         }
 
         hand.addAll(drawnCards);
+        TextureLoader.getCardBox().refreshPane(hand);
         drawnCards.clear();
     }
 
