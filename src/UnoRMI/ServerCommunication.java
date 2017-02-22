@@ -92,10 +92,11 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             try {
                 //todo testare se usare this or Manager.getInstance()
                 Manager.getInstance().getCommunication().getNextHostInterface().send(toSendMsg);
+                //this.getNextHostInterface().send(toSendMsg);
             } catch (RemoteException e) {
-                System.out.println("# REMOTE EXCEPTION # in ServerRegistration.addPlayer ");
+                System.out.println("# REMOTE EXCEPTION # in ServerCommunication.send ");
             } catch (NotBoundException e) {
-                System.out.println("# NOT BOUND EXCEPTION # in ServerRegistration.addPlayer ");
+                System.out.println("# NOT BOUND EXCEPTION # in ServerCommunication.send ");
             }
         }
         else
