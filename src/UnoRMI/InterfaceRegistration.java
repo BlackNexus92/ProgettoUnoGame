@@ -1,5 +1,7 @@
 package UnoRMI;
 
+import UnoGame.GameState;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
@@ -9,7 +11,7 @@ import java.rmi.server.ServerNotActiveException;
  */
 public interface InterfaceRegistration extends Remote {
 
-    void addPlayer(Player p) throws RemoteException, InterruptedException, ServerNotActiveException;
+    GameState addPlayer(Player p) throws RemoteException, InterruptedException, ServerNotActiveException;
 
     int getNumActivePlayers() throws RemoteException;
 
