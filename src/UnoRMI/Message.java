@@ -13,6 +13,9 @@ public class Message implements Serializable {
     public static final int WIN = 3;
     public static final int TURN = 4;
     public static final int ROOM = 5;
+    public static final int PLAYER = 6;
+    public static final int CHECK = 7;
+
 
 
     private static final long serialVersionUID = 1L;

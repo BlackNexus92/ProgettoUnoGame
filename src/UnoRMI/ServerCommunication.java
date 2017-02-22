@@ -53,40 +53,37 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
 
         if(!m.getUuid().equals(Manager.getInstance().getMyHost().getUuid()))
             processMessage(m);
-        else if(m.getPayload() instanceof Room) {//uuid != my_uuid AND type==Room
+        else if(m.type == Message.ROOM) {//uuid != my_uuid AND type==Room
             System.out.println("[CONFIGURATION MSG RETURNED] Ring configured, sending Game State!");
-            //todo gameState
             toSend = true;
-            toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(), Manager.getInstance().getGameState());
-            //todo gui
+            Manager.getInstance().getGameState().setTurn(true);
+            toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(), Manager.getInstance().getMyHost().getUuid());
+            toSendMsg.type = Message.TURN;
         }
-        else if(m.getPayload() instanceof GameState) {
-            //todo inizio turno
-            System.out.println("[RETURNED GAME STATE MSG] Choose turn!");
-        }
-        else if(m.getPayload() instanceof Player) {
+        else if(m.type == Message.PLAYER) {
             System.out.println("[RETURNED PLAYER MSG] Crashed player removed from Ring!");
-            if(Manager.getInstance().getGameState() == null) { //quando crash player è stato notificato a tutti
-                System.out.println("[REQUEST MSG] Sending Game State request!");
-                String s = "Request";
-                toSend = true;
-                toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(), s);
-            }
-            else {
-                System.out.println("[GAME STATE MSG] Sending Game State!");
-                toSend = true;
-                toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(), Manager.getInstance().getGameState());
-            }
         }
-        else if(m.getPayload() instanceof String) {
-            System.out.println("[REQUEST MSG RETURNED] Game State request complete!");
-        }
-        else if(m.getPayload() instanceof Integer) { //check msg da inviare quando timer è scaduto
+        else if(m.type == Message.CHECK) { //check msg da inviare quando timer è scaduto
             if((Integer) m.getPayload() == 0)
                 System.out.println("[CHECK MSG RETURNED] No Crashes, a player is thinking!");
             else
                 System.out.println("[CHECK MSG RETURNED] There is an undefined Crash!");
         }
+        else if(m.type == Message.MOVE || m.type == Message.PASS) {
+            System.out.println("[MOVE MSG RETURNED] !");
+            toSend = true;
+            if(Manager.getInstance().getGameState().getReverse()) {
+                toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(),
+                        Manager.getInstance().getRoom().getPrevious(Manager.getInstance().getMyPlayer()).getId());
+            }
+            else {
+                toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(),
+                        Manager.getInstance().getRoom().getNext(Manager.getInstance().getMyPlayer()).getId());
+
+            }
+            toSendMsg.type = Message.TURN;
+        }
+
 
         if(toSend) {
             try {

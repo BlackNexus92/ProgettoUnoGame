@@ -18,7 +18,7 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
     /*stato del gioco*/
     private GameState gameState;
     /*serve per creare id dei player*/
-    private int idPlayer = 1;
+    private int idPlayer = 0;
 
     public ServerRegistration(int n, Player p) throws RemoteException, InterruptedException, ServerNotActiveException {
         this.room = new Room(n);
@@ -42,6 +42,7 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
             Manager.getInstance().setRoom(this.room);
             //todo
             Message m = new Message(uuid,this.room);
+            m.type = Message.ROOM;
             try {
                 Manager.getInstance().getCommunication().getNextHostInterface().send(m);
             } catch (RemoteException e) {
