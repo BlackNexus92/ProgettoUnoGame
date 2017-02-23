@@ -32,7 +32,6 @@ public class CardBox {
         table = new Table();
         table.padLeft(10);
         table.padRight(10);
-        table.setFillParent(true);
         pane = new ScrollPane(table);
         pane.setSize(w,h);
         pane.setX(x);

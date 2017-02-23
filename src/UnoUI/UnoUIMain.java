@@ -217,7 +217,7 @@ public class UnoUIMain implements Screen {
     private void setPlayerRing(SpriteBatch batch,ShapeRenderer sr)
     {
         ArrayList<Player> players = room.getPlayers();
-        int i = 0,playerID;
+        int i = 1,playerID;
         Player p;
         Iterator it = players.iterator();
         playerID = Manager.getInstance().getMyPlayer().getId();
@@ -242,7 +242,7 @@ public class UnoUIMain implements Screen {
     private void drawPlayerRing(SpriteBatch batch,ShapeRenderer sr, Player p, int i, int nPlayers)
     {
         float xc,yc;
-        xc = 75 + 874*i/(nPlayers-1);
+        xc = 75 + 874*i/(nPlayers);
         yc = 650;
         cardSprite.setPosition(xc-cardSprite.getWidth()/2,yc-cardSprite.getHeight()/2);
         cardSprite.draw(batch);
@@ -259,9 +259,11 @@ public class UnoUIMain implements Screen {
         if(manager.getIdPlaying()==p.getId())
         {
             batch.end();
+            Gdx.gl.glEnable(Gdx.gl20.GL_BLEND);
             sr.begin(ShapeRenderer.ShapeType.Filled);
-            drawTurnHighlight(sr, p.getId(), nPlayers);
+            drawTurnHighlight(sr,i,nPlayers);
             sr.end();
+            Gdx.gl.glDisable(Gdx.gl20.GL_BLEND);
             batch.begin();
         }
     }
@@ -291,7 +293,7 @@ public class UnoUIMain implements Screen {
     private void drawTurnHighlight(ShapeRenderer sr,int id,int nPlayers)
     {
         float xc,yc;
-        xc = 75 + 874*id/(nPlayers-1);
+        xc = 75 + 874*id/(nPlayers);
         yc = 650;
         sr.setColor(0.5f,0.5f,0.5f,0.6f);
         sr.rect(xc-5-cardSprite.getWidth()/2,yc-cardSprite.getHeight()/2,cardSprite.getWidth()+15,cardSprite.getHeight()+10);
