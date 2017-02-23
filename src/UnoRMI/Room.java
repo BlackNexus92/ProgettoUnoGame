@@ -102,5 +102,10 @@ public class Room implements Serializable {
         return null;
     }
 
+    public Player getPlayerFromId(int id) {
+        for(int i=0;i<players.size();i++)
+            if(players.get(i).getId()==id) return players.get(i);
+        return null;
+    }
 
 }
