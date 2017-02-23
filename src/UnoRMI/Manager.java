@@ -61,7 +61,7 @@ public class Manager {
 
     public void setGameState(GameState g) { this.gameState = g; }
 
-    public boolean isPlaying() { return this.idPlaying==player.getId(); }
+    public boolean isPlaying() { return (this.idPlaying==player.getId() && winner < 0); }
 
     public int getIdPlaying() { return idPlaying; }
 

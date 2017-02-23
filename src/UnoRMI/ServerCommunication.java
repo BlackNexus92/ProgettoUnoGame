@@ -57,9 +57,10 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             System.out.println("[CONFIGURATION MSG RETURNED] Ring configured, sending Game State!");
             toSend = true;
             Manager.getInstance().setIdPlaying(Manager.getInstance().getMyPlayer().getId());
-            toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(), Manager.getInstance().getMyHost().getUuid());
+            toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(), Manager.getInstance().getMyPlayer().getId());
             toSendMsg.type = Message.TURN;
-            //ss
+            Manager.getInstance().getGameState().initializeHand(Manager.getInstance().getMyPlayer().getId(), Manager.getInstance().getRoom().getNumStartingPlayers());
+            Manager.getInstance().getGameState().triggerTopCard();
         }
         else if(m.type == Message.PLAYER) {
             System.out.println("[RETURNED PLAYER MSG] Crashed player removed from Ring!");
@@ -70,7 +71,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             else
                 System.out.println("[CHECK MSG RETURNED] There is an undefined Crash!");
         }
-        else if(m.type == Message.MOVE || m.type == Message.PASS) {
+        else if(m.type == Message.MOVE || m.type == Message.PASS || m.type == Message.SHUFFLEPASS || m.type == Message.SHUFFLEMOVE) {
             System.out.println("[MOVE MSG RETURNED] !");
             toSend = true;
             if(Manager.getInstance().getGameState().getReverse()) {
@@ -102,46 +103,25 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
     }
 
     private void processMessage(Message message) {
-        if(message.getPayload() instanceof Room ) {
+        if(message.type == Message.ROOM) {
             System.out.println("[CONFIGURATION MSG] Ring configured!");
             this.configureRing((Room) message.getPayload());
-            //todo gui
+            Manager.getInstance().getGameState().initializeHand(Manager.getInstance().getMyPlayer().getId(), Manager.getInstance().getRoom().getNumStartingPlayers());
         }
-        else if(message.getPayload() instanceof GameState) {
-            System.out.print("[GAME STATE MSG] ");
-            if(Manager.getInstance().getGameState() == null) {
-                System.out.println("Initial hand! ");
-                GameState gs = (GameState) message.getPayload();
-                gs.setHand(gs.getDeck().drawCards(7));
-                Manager.getInstance().setGameState(gs);
-                message.setPayload(gs);
-            }
-            else {
-                System.out.println("Game State changed! ");
-                GameState gs = (GameState) message.getPayload();
-                //todo
-            }
-
+        else if(message.type == Message.TURN) {
+            System.out.println("[TURN MSG] Turn of player " + (Integer) message.getPayload() +"!");
+            Manager.getInstance().setIdPlaying((Integer) message.getPayload());
+            if(Manager.getInstance().isPlaying())
+                Manager.getInstance().getGameState().triggerTopCard();
         }
-        else if (message.getPayload() instanceof Player) {//todo
-            System.out.println("[PLAYER MSG] Player: ");
+        else if (message.type == Message.PLAYER) {
+            System.out.println("[PLAYER MSG] Player " + ((Player) message.getPayload()).getId() + " crashed!");
             CrashManager.getInstance().repairRing((Player) message.getPayload());
         }
-        else if(message.getPayload() instanceof String) {
-            System.out.print("[REQUEST MSG]  ");
-            if(Manager.getInstance().getGameState() != null) {
-                System.out.println("Player: " + Manager.getInstance().getMyHost().getIp() + " has a valid Game State!");
-                message.setUuid(Manager.getInstance().getMyHost().getUuid());
-                message.setPayload(Manager.getInstance().getGameState());
-            }
-            else
-                System.out.println("Player: " + Manager.getInstance().getMyHost().getIp() + " has NOT a valid Game State. Forwarding!");
-        }
-        else if(message.getPayload() instanceof Integer) {
-            Integer num = (Integer) message.getPayload();
-            num-=1;
-            message.setPayload(num);
-            System.out.print("[CHECK MSG] Remaing hop =  " + num);
+        else if(message.type == Message.MOVE) {
+            Card c = (Card) message.getPayload();
+            Manager.getInstance().getGameState().applyCardOtherPlayer(c);
+            int newCards = message.drawnCards - 1;
         }
 
         try{
@@ -160,10 +140,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         Player myPlayer = Manager.getInstance().getMyPlayer();
         //todo scegliere next o previous
         Player nextPlayer;
-        if(true/*reverse*/)
-            nextPlayer = Manager.getInstance().getRoom().getNext(myPlayer);
-        else
-            nextPlayer = Manager.getInstance().getRoom().getPrevious(myPlayer);
+        nextPlayer = Manager.getInstance().getRoom().getNext(myPlayer);
 
         Registry register = null;
 
@@ -172,7 +149,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             remote = (InterfaceCommunication) register.lookup("Communication"); //todo
         } catch (RemoteException e) {
             System.out.println("# REMOTE EXCEPTION # in ServerCommunication.getNextHostInterface ");
-            //todo crashManager
+            //todo inoltrare msg
             return CrashManager.getInstance().repairCrash(nextPlayer);
         } catch (Exception e) {
             System.out.println("# EXCEPTION # in ServerCommunication.getNextHostInterface ");
