@@ -11,7 +11,6 @@ public class Message implements Serializable {
     public static final int PASS = 1;
     public static final int SHUFFLEPASS = 2;
     public static final int SHUFFLEMOVE = 8;
-    public static final int WIN = 3;
     public static final int TURN = 4;
     public static final int ROOM = 5;
     public static final int PLAYER = 6;
@@ -25,7 +24,7 @@ public class Message implements Serializable {
     /*corpo del messaggio*/
     private Object payload;
     /*id del player*/
-    private char idPlayer;
+    private int idPlayer;
 
     public int type;
 
@@ -52,9 +51,9 @@ public class Message implements Serializable {
         this.payload = payload;
     }
 
-    public char getIdPlayer() { return idPlayer; }
+    public int getIdPlayer() { return idPlayer; }
 
-    public void setIdPlayer(char idPlayer) {
+    public void setIdPlayer(int idPlayer) {
         this.idPlayer = idPlayer;
     }
 }

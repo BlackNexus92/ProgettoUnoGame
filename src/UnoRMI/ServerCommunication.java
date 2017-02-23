@@ -121,22 +121,27 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         else if(message.type == Message.MOVE || message.type == Message.PASS || message.type == Message.SHUFFLEPASS || message.type == Message.SHUFFLEMOVE) {
 
             int newCards = message.drawnCards + Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer()).getnCards();
-            if(message.type == Message.MOVE || message.type == Message.SHUFFLEMOVE) {
-                newCards -= 1;
-                if(message.type == Message.MOVE)
-                    Manager.getInstance().getGameState().applyCardOtherPlayer((Card) message.getPayload());
-            }
 
             if(message.type == Message.SHUFFLEPASS || message.type == Message.SHUFFLEMOVE) {
                 Manager.getInstance().getGameState().setDeck((Deck) message.getPayload());
             }
 
-            Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer()).setnCards(newCards);
+            if(message.type == Message.MOVE || message.type == Message.SHUFFLEMOVE) {
+                newCards -= 1;
+                if(message.type == Message.MOVE)
+                    Manager.getInstance().getGameState().applyCardOtherPlayer((Card) message.getPayload());
+                if(Manager.getInstance().getGameState().getDeck().getTopCard().type==Card.CHANGEDIRTYPE)
+                    Manager.getInstance().getGameState().setReverse(!Manager.getInstance().getGameState().getReverse());
+            }
 
+            if(message.type==Message.SHUFFLEPASS || message.type==Message.PASS) {
+                Manager.getInstance().getGameState().getDeck().getTopCard().active = false;
+            }
+
+            Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer()).setnCards(newCards);
+            if(newCards==0) Manager.getInstance().setWinner(message.getIdPlayer());
         }
-        else if(message.type == Message.WIN) {
-            Manager.getInstance().setWinner((Integer) message.getPayload());
-        }
+
 
         try{
             this.getNextHostInterface().send(message);

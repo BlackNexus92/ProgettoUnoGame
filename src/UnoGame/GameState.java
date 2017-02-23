@@ -1,7 +1,12 @@
 package UnoGame;
 
+import UnoRMI.Manager;
+import UnoRMI.Message;
 import UnoUI.TextureLoader;
 
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 import java.util.ArrayList;
 
 /**
@@ -80,24 +85,63 @@ public class GameState {
     public void applyCard(Card c)
     {
         if(c==null) return;
+        Message m = new Message(Manager.getInstance().getMyHost().getUuid(), null);
+        m.setIdPlayer(Manager.getInstance().getMyPlayer().getId());
+        m.drawnCards = cardsToDraw;
         if(canPlay && deck.getTopCard().isCardCompatible(c))
         {
             if(!removeCardFromHand(c)) return;
             c.active = true;
             deck.setTopCard(c);
             if(c.type==Card.CHANGEDIRTYPE) reverse = !reverse;
-/*
-            if(hand.size()==0)
-// BROADCAST MESSAGGIO CARTA GIOCATA E VINCITORE
-            else
+
 // BROADCAST MESSAGGIO CARTA GIOCATA E CARTE PESCATE
-*/
+            if(shuffled) {
+                m.type = Message.SHUFFLEMOVE;
+                m.setPayload(deck);
+            }
+            else {
+                m.type = Message.MOVE;
+                m.setPayload(c);
+            }
+
             shuffled=false;
             canPlay = false;
+
+            try {
+                Manager.getInstance().getCommunication().getNextHostInterface().send(m);
+            } catch (RemoteException e) {
+                System.out.println("# REMOTE EXCEPTION # in ServerCommunication.send ");
+            } catch (NotBoundException e) {
+                System.out.println("# NOT BOUND EXCEPTION # in ServerCommunication.send ");
+            } catch (ServerNotActiveException e) {
+                System.out.println("# SERVER NOT ACTIVE EXCEPTION # in ServerCommunication.send ");
+            }
+
         }
         else if(!canPlay || !deck.getTopCard().existsLegalMove(hand))
         {
+
 // BROADCAST MESSAGGIO TURNO PASSATO E CARTE PESCATE
+            if(shuffled) {
+                m.type = Message.SHUFFLEPASS;
+                m.setPayload(deck);
+            }
+            else {
+                m.type = Message.PASS;
+                m.setPayload(null);
+            }
+
+            try {
+                Manager.getInstance().getCommunication().getNextHostInterface().send(m);
+            } catch (RemoteException e) {
+                System.out.println("# REMOTE EXCEPTION # in ServerCommunication.send ");
+            } catch (NotBoundException e) {
+                System.out.println("# NOT BOUND EXCEPTION # in ServerCommunication.send ");
+            } catch (ServerNotActiveException e) {
+                System.out.println("# SERVER NOT ACTIVE EXCEPTION # in ServerCommunication.send ");
+            }
+
             shuffled = false;
             canPlay = false;
         }
