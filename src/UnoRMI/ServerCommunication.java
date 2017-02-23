@@ -118,10 +118,24 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             System.out.println("[PLAYER MSG] Player " + ((Player) message.getPayload()).getId() + " crashed!");
             CrashManager.getInstance().repairRing((Player) message.getPayload());
         }
-        else if(message.type == Message.MOVE) {
-            Card c = (Card) message.getPayload();
-            Manager.getInstance().getGameState().applyCardOtherPlayer(c);
-            int newCards = message.drawnCards - 1;
+        else if(message.type == Message.MOVE || message.type == Message.PASS || message.type == Message.SHUFFLEPASS || message.type == Message.SHUFFLEMOVE) {
+
+            int newCards = message.drawnCards + Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer()).getnCards();
+            if(message.type == Message.MOVE || message.type == Message.SHUFFLEMOVE) {
+                newCards -= 1;
+                if(message.type == Message.MOVE)
+                    Manager.getInstance().getGameState().applyCardOtherPlayer((Card) message.getPayload());
+            }
+
+            if(message.type == Message.SHUFFLEPASS || message.type == Message.SHUFFLEMOVE) {
+                Manager.getInstance().getGameState().setDeck((Deck) message.getPayload());
+            }
+
+            Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer()).setnCards(newCards);
+
+        }
+        else if(message.type == Message.WIN) {
+            Manager.getInstance().setWinner((Integer) message.getPayload());
         }
 
         try{
