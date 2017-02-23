@@ -20,6 +20,7 @@ import UnoGame.GameState;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import UnoGame.Card;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -144,7 +145,7 @@ public class UnoUIMain implements Screen {
         pt22font.draw(batch, glyphLayout, 10, 230);
         glyphLayout.setText(pt22font, "Mano: " + gamestate.getHand().size() + " carte");
         pt22font.draw(batch, glyphLayout, 1014 - glyphLayout.width, 230);
-        setPlayerRing(batch);
+        setPlayerRing(batch,shaperenderer);
         topCardSprite.draw(batch);
         pt22font.setColor(1.0f,1.0f,1.0f,1.0f);
         batch.end();
@@ -213,7 +214,7 @@ public class UnoUIMain implements Screen {
         sr.rect(cardBoxW*3/4,0,cardBoxW/4,cardBoxH);
     }
 
-    private void setPlayerRing(SpriteBatch batch)
+    private void setPlayerRing(SpriteBatch batch,ShapeRenderer sr)
     {
         ArrayList<Player> players = room.getPlayers();
         int i = 0,playerID;
@@ -228,17 +229,17 @@ public class UnoUIMain implements Screen {
 // Disegno i players successivi al giocatore
         while(it.hasNext()) {
             p = (Player)it.next();
-            drawPlayerRing(batch,p,i++,players.size()); }
+            drawPlayerRing(batch,sr,p,i++,players.size()); }
 // Disegno i restanti players successivi al giocatore, riavvolgendo l'iteratore
         it = players.iterator();
         while(it.hasNext()) {
             p = (Player)it.next();
             if(p.getId()==playerID)
                 break;
-            drawPlayerRing(batch,p,i++,players.size()); }
+            drawPlayerRing(batch,sr,p,i++,players.size()); }
     }
 
-    private void drawPlayerRing(SpriteBatch batch,Player p,int i,int nPlayers)
+    private void drawPlayerRing(SpriteBatch batch,ShapeRenderer sr, Player p, int i, int nPlayers)
     {
         float xc,yc;
         xc = 75 + 874*i/(nPlayers-1);
@@ -254,6 +255,14 @@ public class UnoUIMain implements Screen {
         {
             cardSprite.setPosition(xc-cardSprite.getWidth()/2 + 7,yc-cardSprite.getHeight()/2 + 7);
             cardSprite.draw(batch);
+        }
+        if(manager.getIdPlaying()==p.getId())
+        {
+            batch.end();
+            sr.begin(ShapeRenderer.ShapeType.Filled);
+            drawTurnHighlight(sr, p.getId(), nPlayers);
+            sr.end();
+            batch.begin();
         }
     }
 
