@@ -4,9 +4,9 @@ package UnoUI;
  * Created by TheNexus on 19/02/17.
  */
 
+import UnoRMI.*;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import UnoRMI.Manager;
 import UnoGame.GameState;
 
 import java.net.SocketException;
@@ -22,12 +22,6 @@ import java.text.ParseException;
 
 
 import UnoRMI.Manager;
-import UnoRMI.Host;
-import UnoRMI.NetworkUtility;
-import UnoRMI.ServerCommunication;
-import UnoRMI.InterfaceRegistration;
-import UnoRMI.Player;
-import UnoRMI.ServerRegistration;
 
 import java.text.ParseException;
 
@@ -43,10 +37,11 @@ public class DesktopLauncher {
     public static void main (String[] arg) {
 
         Manager m = Manager.getInstance();
-        GameState g = new GameState();
-        g.setTurn(false);
-        m.setGameState(g);
-
+        m.setGameState(new GameState());
+        m.setMyPlayer(new Player());
+        m.setRoom(new Room(1));
+        m.setIdPlaying(-1);
+        m.setWinner(-1);
         ConfigPanel sp;
         try { sp = new ConfigPanel(); }
         catch (ParseException e) {e.printStackTrace();}

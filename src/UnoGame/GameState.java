@@ -13,8 +13,8 @@ public class GameState {
     private Deck deck;
     private ArrayList<Card> hand;
     private boolean canPlay = false;
-    private boolean hasTurn = false;
     private boolean reverse = false;
+    private boolean shuffled = false;
     private int cardsToDraw = 0;
 
     public GameState()
@@ -27,8 +27,7 @@ public class GameState {
     public boolean getReverse() { return reverse; }
     public void setReverse(boolean r) { reverse = r; }
 
-    public boolean hasTurn() { return hasTurn; }
-    public void setTurn(boolean t) { canPlay=t; hasTurn=t; }
+    public void setForTurn(boolean t) { canPlay=t; if(t) shuffled=false; }
 
     public void setDeck(Deck d) { deck = d; }
     public Deck getDeck() { return deck; }
@@ -38,7 +37,7 @@ public class GameState {
 
     public void initializeHand(int id,int nPlayers)
     {
-        if(id<0 || id>15 || id>nPlayers || nPlayers>15) return;
+        if(id<0 || id>=Deck.MAXPLAYERS || id>=nPlayers || nPlayers>Deck.MAXPLAYERS) return;
         hand.clear();
         int i;
         for(i=0;i<id;i++) deck.drawCards(Deck.HANDSIZE);
@@ -70,7 +69,7 @@ public class GameState {
         {
             deck.swapDecks();
             drawnCards.addAll(deck.drawCards(cardsToDraw-drawnCards.size()));
-// BROADCAST MESSAGGIO MAZZI SCAMBIATI
+            shuffled=true;
         }
 
         hand.addAll(drawnCards);
@@ -86,8 +85,6 @@ public class GameState {
             if(!removeCardFromHand(c)) return;
             c.active = true;
             deck.setTopCard(c);
-            canPlay = false;
-            hasTurn = false;
             if(c.type==Card.CHANGEDIRTYPE) reverse = !reverse;
 /*
             if(hand.size()==0)
@@ -95,14 +92,14 @@ public class GameState {
             else
 // BROADCAST MESSAGGIO CARTA GIOCATA E CARTE PESCATE
 */
+            shuffled=false;
+            canPlay = false;
         }
         else if(!canPlay || !deck.getTopCard().existsLegalMove(hand))
         {
-            canPlay = false;
-            hasTurn = false;
-
 // BROADCAST MESSAGGIO TURNO PASSATO E CARTE PESCATE
-
+            shuffled = false;
+            canPlay = false;
         }
     }
 

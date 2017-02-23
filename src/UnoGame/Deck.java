@@ -15,6 +15,8 @@ public class Deck implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+
+    public static final int MAXPLAYERS = 15;
     public static final int DECKSIZE = 108;
     public static final int HANDSIZE = 7;
 

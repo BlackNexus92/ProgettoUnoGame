@@ -4,6 +4,7 @@ package UnoUI;
  * Created by TheNexus on 19/02/17.
  */
 
+import UnoGame.Deck;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -13,11 +14,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import UnoRMI.Manager;
+import UnoRMI.Room;
+import UnoRMI.Player;
 import UnoGame.GameState;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import UnoGame.Card;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class UnoUIMain implements Screen {
 
@@ -36,6 +40,7 @@ public class UnoUIMain implements Screen {
 
     private Manager manager;
     private GameState gamestate;
+    private Room room;
 
     private CardBox cardBox;
     private int cardBoxW;
@@ -77,6 +82,7 @@ public class UnoUIMain implements Screen {
         glyphLayout = new GlyphLayout();
 
         manager = Manager.getInstance();
+        room = Manager.getInstance().getRoom();
         gamestate = manager.getGameState();
         TextureLoader.setTopCardTexture(gamestate.getDeck().getTopCard());
         topCardSprite.setRegion(TextureLoader.getTopCardTexture());
@@ -121,6 +127,8 @@ public class UnoUIMain implements Screen {
 
     @Override
     public void render(float delta) {
+        gamestate = manager.getGameState();
+        room = Manager.getInstance().getRoom();
         if(TextureLoader.hasChanged())
         {
             TextureLoader.setTopCardTexture(gamestate.getDeck().getTopCard());
@@ -136,8 +144,9 @@ public class UnoUIMain implements Screen {
         pt22font.draw(batch, glyphLayout, 10, 230);
         glyphLayout.setText(pt22font, "Mano: " + gamestate.getHand().size() + " carte");
         pt22font.draw(batch, glyphLayout, 1014 - glyphLayout.width, 230);
-        drawPlayerRing(batch);
+        setPlayerRing(batch);
         topCardSprite.draw(batch);
+        pt22font.setColor(1.0f,1.0f,1.0f,1.0f);
         batch.end();
         cardBox.drawAndAct(delta);
         Gdx.gl.glEnable(Gdx.gl20.GL_BLEND);
@@ -145,7 +154,6 @@ public class UnoUIMain implements Screen {
         drawColorSignal(shaperenderer);
         if (choosingColor)
             drawColorChooser(shaperenderer);
-        drawTurnHighlight(shaperenderer);
         shaperenderer.end();
         Gdx.gl.glDisable(Gdx.gl20.GL_BLEND);
     }
@@ -155,8 +163,7 @@ public class UnoUIMain implements Screen {
         int x = Gdx.input.getX();
         int y = Gdx.graphics.getHeight() - Gdx.input.getY();
 
-// DA CAMBIARE CON INDICATORE DI TURNO
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && gamestate.hasTurn() && delta - lastClick > 250) {
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && Manager.getInstance().isPlaying() && delta - lastClick > 250) {
             lastClick = delta;
             if (choosingColor) {
                 if (y >= 0 && y < cardBoxH) {
@@ -206,41 +213,78 @@ public class UnoUIMain implements Screen {
         sr.rect(cardBoxW*3/4,0,cardBoxW/4,cardBoxH);
     }
 
-    private void drawPlayerRing(SpriteBatch batch)
+    private void setPlayerRing(SpriteBatch batch)
     {
-        int nPlayers = 6;
+        ArrayList<Player> players = room.getPlayers();
+        int i = 0,playerID;
+        Player p;
+        Iterator it = players.iterator();
+        playerID = Manager.getInstance().getMyPlayer().getId();
+// Ciclo fino a trovare l'istanza del player nell'arraylist
+        while(it.hasNext()) {
+            p = (Player)it.next();
+            if(p.getId()==playerID)
+                break; }
+// Disegno i players successivi al giocatore
+        while(it.hasNext()) {
+            p = (Player)it.next();
+            drawPlayerRing(batch,p,i++,players.size()); }
+// Disegno i restanti players successivi al giocatore, riavvolgendo l'iteratore
+        it = players.iterator();
+        while(it.hasNext()) {
+            p = (Player)it.next();
+            if(p.getId()==playerID)
+                break;
+            drawPlayerRing(batch,p,i++,players.size()); }
+    }
+
+    private void drawPlayerRing(SpriteBatch batch,Player p,int i,int nPlayers)
+    {
         float xc,yc;
-        for(int i=0;i<nPlayers;i++)
+        xc = 75 + 874*i/(nPlayers-1);
+        yc = 650;
+        cardSprite.setPosition(xc-cardSprite.getWidth()/2,yc-cardSprite.getHeight()/2);
+        cardSprite.draw(batch);
+        glyphLayout.setText(pt22font,p.getUsername());
+        setFontColorFromID(pt22font,p.getId());
+        pt22font.draw(batch,glyphLayout,xc-glyphLayout.width/2,yc-80);
+        glyphLayout.setText(pt22font,p.getnCards()+" Carte");
+        pt22font.draw(batch,glyphLayout,xc-glyphLayout.width/2,yc-100);
+        if(p.getnCards()>1)
         {
-            xc = 75 + 874*i/(nPlayers-1);
-            yc = 650;
-            cardSprite.setPosition(xc-cardSprite.getWidth()/2,yc-cardSprite.getHeight()/2);
+            cardSprite.setPosition(xc-cardSprite.getWidth()/2 + 7,yc-cardSprite.getHeight()/2 + 7);
             cardSprite.draw(batch);
-            glyphLayout.setText(pt22font,"Giocatore "+i);
-            pt22font.draw(batch,glyphLayout,xc-glyphLayout.width/2,yc-80);
-            glyphLayout.setText(pt22font,20+" Carte");
-            pt22font.draw(batch,glyphLayout,xc-glyphLayout.width/2,yc-100);
-            if(true)
-            {
-                cardSprite.setPosition(xc-cardSprite.getWidth()/2 + 7,yc-cardSprite.getHeight()/2 + 7);
-                cardSprite.draw(batch);
-            }
         }
     }
 
-    private void drawTurnHighlight(ShapeRenderer sr)
+    private void setFontColorFromID(BitmapFont font,int id)
     {
-        int nPlayers = 6;
+        if(id==0)
+            font.setColor(1.0f,0.0f,0.0f,1.0f);
+        else if(id==1)
+            font.setColor(0.0f,1.0f,0.0f,1.0f);
+        else if(id==2)
+            font.setColor(0.0f,0.0f,1.0f,1.0f);
+        else if(id==3)
+            font.setColor(0.0f,1.0f,1.0f,1.0f);
+        else if(id==4)
+            font.setColor(1.0f,0.0f,1.0f,1.0f);
+        else if(id==5)
+            font.setColor(1.0f,1.0f,0.0f,1.0f);
+        else if(id==6)
+            font.setColor(1.0f,1.0f,1.0f,1.0f);
+        else if(id==7)
+            font.setColor(0.0f,0.0f,0.0f,1.0f);
+        else
+            font.setColor(0.5f,0.5f,0.5f,1.0f);
+    }
+
+    private void drawTurnHighlight(ShapeRenderer sr,int id,int nPlayers)
+    {
         float xc,yc;
-        for(int i=0;i<nPlayers;i++)
-        {
-            if(i==3)
-            {
-                xc = 75 + 874*i/(nPlayers-1);
-                yc = 650;
-                sr.setColor(0.5f,0.5f,0.5f,0.6f);
-                sr.rect(xc-5-cardSprite.getWidth()/2,yc-cardSprite.getHeight()/2,cardSprite.getWidth()+15,cardSprite.getHeight()+10);
-            }
-        }
+        xc = 75 + 874*id/(nPlayers-1);
+        yc = 650;
+        sr.setColor(0.5f,0.5f,0.5f,0.6f);
+        sr.rect(xc-5-cardSprite.getWidth()/2,yc-cardSprite.getHeight()/2,cardSprite.getWidth()+15,cardSprite.getHeight()+10);
     }
 }

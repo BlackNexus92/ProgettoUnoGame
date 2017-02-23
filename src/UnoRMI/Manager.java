@@ -17,8 +17,9 @@ public class Manager {
     private Player player;
     /**/
     private GameState gameState;
-    /*Indica se il player sta giocando*/
-    private boolean isPlaying;
+    /*Indica quale player sta giocando*/
+    private int idPlaying;
+    private int winner;
 
     //todo aggiungere variabili?
 
@@ -60,9 +61,15 @@ public class Manager {
 
     public void setGameState(GameState g) { this.gameState = g; }
 
-    public boolean getIsPlaying() { return this.isPlaying; }
+    public boolean isPlaying() { return this.idPlaying==player.getId(); }
 
-    public void setIsPlaying(boolean b) { this.isPlaying = b; }
+    public int getIdPlaying() { return idPlaying; }
+
+    public void setWinner(int w) { winner=w; }
+
+    public int getWinner() { return winner; }
+
+    public void setIdPlaying(int b) { this.idPlaying = b; gameState.setForTurn(isPlaying()); }
 
     public String getIpFromUuid(String u) {
         for(int i=0; i<this.room.getPlayers().size(); i++) {

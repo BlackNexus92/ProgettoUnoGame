@@ -56,7 +56,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         else if(m.type == Message.ROOM) {//uuid != my_uuid AND type==Room
             System.out.println("[CONFIGURATION MSG RETURNED] Ring configured, sending Game State!");
             toSend = true;
-            Manager.getInstance().getGameState().setTurn(true);
+            Manager.getInstance().setIdPlaying(Manager.getInstance().getMyPlayer().getId());
             toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(), Manager.getInstance().getMyHost().getUuid());
             toSendMsg.type = Message.TURN;
             //ss
