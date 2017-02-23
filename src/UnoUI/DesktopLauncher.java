@@ -28,7 +28,7 @@ import java.text.ParseException;
 
 public class DesktopLauncher {
 
-    private static int PORT = 1099;
+    private static int PORT = 1234;
     private static Registry registry;
 
     public static int resX = 1024;
@@ -97,6 +97,7 @@ public class DesktopLauncher {
             Player myPlayer = new Player(username, myHost);
             Manager.getInstance().setMyPlayer(myPlayer);
             Manager.getInstance().setGameState(registrationServer.addPlayer(myPlayer));
+            registrationServer.receivedGamestate();
             System.out.println("[HOST REGISTRED]");
         }
     }

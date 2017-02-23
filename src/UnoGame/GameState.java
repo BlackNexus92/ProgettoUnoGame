@@ -8,12 +8,15 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.util.ArrayList;
+import java.io.Serializable;
 
 /**
  * Created by TheNexus on 20/02/17.
  */
 
-public class GameState {
+public class GameState implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Deck deck;
     private ArrayList<Card> hand;
@@ -60,8 +63,9 @@ public class GameState {
             if(topCard.type==Card.BLOCKTYPE) { canPlay = false; cardsToDraw = 0;}
             if(topCard.type==Card.PLUSTWOTYPE) { canPlay = false; cardsToDraw = 2; }
             if(topCard.type==Card.PLUSFOURTYPE) { canPlay = false; cardsToDraw = 4; }
+            if(topCard.type==Card.CHANGEDIRTYPE && Manager.getInstance().getRoom().getCurrentPlayers()==2) { canPlay = false; cardsToDraw = 0; }
         }
-        if(!topCard.active && !topCard.existsLegalMove(hand))
+        if(canPlay && !topCard.existsLegalMove(hand))
         {
             cardsToDraw = 1;
         }

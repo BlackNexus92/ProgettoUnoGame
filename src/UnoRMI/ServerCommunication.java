@@ -20,7 +20,7 @@ import java.util.TimerTask;
 public class ServerCommunication extends UnicastRemoteObject implements InterfaceCommunication {
 
     private static final long serialVersionUID = 1L;
-    static int PORT = 1099;
+    static int PORT = 1234;
 
     public ServerCommunication() throws RemoteException { }
 
@@ -31,6 +31,8 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         for(int i=0; i<r.getCurrentPlayers(); i++) {
             Player current = r.getPlayers().get(i);
             //todo reverse?
+            if(current.getHost().getIp().equals(Manager.getInstance().getMyHost().getIp()))
+                Manager.getInstance().getMyPlayer().setId(current.getId());
             Player next = r.getNext(current);
             System.out.println("[RING CONFIGURATION] Host "+i+", ip: "+current.getHost().getIp()+
                     "  ==> next ip: "+next.getHost().getIp());

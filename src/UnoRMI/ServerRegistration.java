@@ -30,11 +30,14 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
     //todo
     public GameState addPlayer(Player p) throws RemoteException, InterruptedException, ServerNotActiveException {
         System.out.println("[REGISTRATION] Added Host IP: "+p.getHost().getIp()+" and PORT:"+p.getHost().getPort());
-        p.setId(idPlayer);
-        idPlayer++;
+        p.setId(idPlayer++);
         this.room.addPlayer(p);
         //		Controller.getInstance().getStartPanel().informServerHostRegistred(this.room);
+        return Manager.getInstance().getGameState();
 
+    }
+
+    public void receivedGamestate() throws RemoteException, InterruptedException, ServerNotActiveException {
         if(this.room.isFull())
         {
             System.out.println("[REGISTRATION]: Room is full, send configuration message");
@@ -52,9 +55,6 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
             }
 
         }
-
-        return Manager.getInstance().getGameState();
-
     }
 
     public int getNumActivePlayers() throws RemoteException {

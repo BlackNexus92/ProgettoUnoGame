@@ -13,6 +13,8 @@ public interface InterfaceRegistration extends Remote {
 
     GameState addPlayer(Player p) throws RemoteException, InterruptedException, ServerNotActiveException;
 
+    void receivedGamestate() throws RemoteException, InterruptedException, ServerNotActiveException;
+
     int getNumActivePlayers() throws RemoteException;
 
     Room getRoom() throws RemoteException;
