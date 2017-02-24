@@ -98,6 +98,7 @@ public class GameState implements Serializable {
             c.active = true;
             deck.setTopCard(c);
             if(c.type==Card.CHANGEDIRTYPE) reverse = !reverse;
+            if(hand.size()==0) Manager.getInstance().setWinner(Manager.getInstance().getMyPlayer().getId());
 
 // BROADCAST MESSAGGIO CARTA GIOCATA E CARTE PESCATE
             if(shuffled) {

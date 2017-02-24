@@ -75,7 +75,10 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         }
         else if(m.type == Message.MOVE || m.type == Message.PASS || m.type == Message.SHUFFLEPASS || m.type == Message.SHUFFLEMOVE) {
             System.out.println("[MOVE MSG RETURNED] !");
-            toSend = true;
+            if(Manager.getInstance().getWinner()==Manager.getInstance().getMyPlayer().getId())
+                toSend = false;
+            else
+                toSend = true;
             if(Manager.getInstance().getGameState().getReverse()) {
                 toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(),
                         Manager.getInstance().getRoom().getPrevious(Manager.getInstance().getMyPlayer()).getId());
@@ -125,10 +128,11 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
 
             int newCards = message.drawnCards + Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer()).getnCards();
 
-            System.out.println("Player "+message.getIdPlayer()+" played "+message.drawnCards+" cards");
-
             if(message.type == Message.SHUFFLEPASS || message.type == Message.SHUFFLEMOVE) {
                 Manager.getInstance().getGameState().setDeck((Deck) message.getPayload());
+            }
+            else {
+                Manager.getInstance().getGameState().getDeck().drawCards(message.drawnCards);
             }
 
             if(message.type == Message.MOVE || message.type == Message.SHUFFLEMOVE) {
