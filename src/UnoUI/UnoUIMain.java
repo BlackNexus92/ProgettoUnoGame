@@ -246,8 +246,8 @@ public class UnoUIMain implements Screen {
         yc = 650;
         cardSprite.setPosition(xc-cardSprite.getWidth()/2,yc-cardSprite.getHeight()/2);
         cardSprite.draw(batch);
-        glyphLayout.setText(pt22font,p.getUsername());
         setFontColorFromID(pt22font,p.getId());
+        glyphLayout.setText(pt22font,p.getUsername());
         pt22font.draw(batch,glyphLayout,xc-glyphLayout.width/2,yc-80);
         glyphLayout.setText(pt22font,p.getnCards()+" Carte");
         pt22font.draw(batch,glyphLayout,xc-glyphLayout.width/2,yc-100);
