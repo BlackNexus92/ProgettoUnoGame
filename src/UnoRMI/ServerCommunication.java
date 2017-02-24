@@ -86,6 +86,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
 
             }
             toSendMsg.type = Message.TURN;
+            Manager.getInstance().setIdPlaying((Integer)toSendMsg.getPayload());
         }
 
 
@@ -123,6 +124,8 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         else if(message.type == Message.MOVE || message.type == Message.PASS || message.type == Message.SHUFFLEPASS || message.type == Message.SHUFFLEMOVE) {
 
             int newCards = message.drawnCards + Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer()).getnCards();
+
+            System.out.println("Player "+message.getIdPlayer()+" played "+message.drawnCards+" cards");
 
             if(message.type == Message.SHUFFLEPASS || message.type == Message.SHUFFLEMOVE) {
                 Manager.getInstance().getGameState().setDeck((Deck) message.getPayload());
