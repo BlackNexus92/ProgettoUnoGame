@@ -21,11 +21,11 @@ public class CrashManager {
     public InterfaceCommunication repairCrash(Player p) throws NotBoundException, ServerNotActiveException, RemoteException {
         System.out.println("[CRASH MANAGER] Host " + p.getHost().getIp() + " crashed!");
         Manager.getInstance().getRoom().removePlayer(p);
-        //todo Manager.getInstance().getGUI.refreshGui
         String uuid = Manager.getInstance().getMyHost().getUuid();
         Message m = new Message(uuid, p);
         Manager.getInstance().getCommunication().getNextHostInterface().send(m);
-        //todo if players==1 then win
+        if(Manager.getInstance().getRoom().getCurrentPlayers()==1)
+            Manager.getInstance().setWinner(Manager.getInstance().getMyPlayer().getId());
 
         return Manager.getInstance().getCommunication().getNextHostInterface();
     }
