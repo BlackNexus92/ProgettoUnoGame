@@ -68,10 +68,10 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             System.out.println("[RETURNED PLAYER MSG] Crashed player removed from Ring!");
         }
         else if(m.type == Message.CHECK) { //check msg da inviare quando timer è scaduto
-            if((Integer) m.getPayload() == 0)
-                System.out.println("[CHECK MSG RETURNED] No Crashes, a player is thinking!");
-            else
-                System.out.println("[CHECK MSG RETURNED] There is an undefined Crash!");
+            Manager.getInstance().getTimer().cancel();
+            toSend = true;
+            toSendMsg = m;
+
         }
         else if(m.type == Message.MOVE || m.type == Message.PASS || m.type == Message.SHUFFLEPASS || m.type == Message.SHUFFLEMOVE) {
             System.out.println("[MOVE MSG RETURNED] !");

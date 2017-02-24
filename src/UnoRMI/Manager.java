@@ -2,6 +2,8 @@ package UnoRMI;
 
 import UnoGame.GameState;
 
+import java.util.Timer;
+
 /**
  * Created by angelo on 20/02/17.
  */
@@ -20,6 +22,7 @@ public class Manager {
     /*Indica quale player sta giocando*/
     private int idPlaying;
     private int winner;
+    private Timer timer;
 
     //todo aggiungere variabili?
 
@@ -70,6 +73,10 @@ public class Manager {
     public int getWinner() { return winner; }
 
     public void setIdPlaying(int b) { this.idPlaying = b; gameState.setForTurn(isPlaying()); }
+
+    public synchronized void setTimer (Timer t) { this.timer = t; }
+
+    public synchronized Timer getTimer() {return this.timer; }
 
     public String getIpFromUuid(String u) {
         for(int i=0; i<this.room.getPlayers().size(); i++) {

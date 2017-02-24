@@ -27,6 +27,29 @@ public class CrashManager {
         if(Manager.getInstance().getRoom().getCurrentPlayers()==1)
             Manager.getInstance().setWinner(Manager.getInstance().getMyPlayer().getId());
 
+        Message toSendMsg = null;
+        if(Manager.getInstance().getIdPlaying() == p.getId()) {
+            if (Manager.getInstance().getGameState().getReverse()) {
+                toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(),
+                        Manager.getInstance().getRoom().getPrevious(p).getId());
+            } else {
+                toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(),
+                        Manager.getInstance().getRoom().getNext(p).getId());
+
+            }
+            toSendMsg.type = Message.TURN;
+            Manager.getInstance().setIdPlaying((Integer) toSendMsg.getPayload());
+
+            try {
+                //todo testare se usare this or Manager.getInstance()
+                Manager.getInstance().getCommunication().getNextHostInterface().send(toSendMsg);
+                //this.getNextHostInterface().send(toSendMsg);
+            } catch (RemoteException e) {
+                System.out.println("# REMOTE EXCEPTION # in ServerCommunication.send ");
+            } catch (NotBoundException e) {
+                System.out.println("# NOT BOUND EXCEPTION # in ServerCommunication.send ");
+            }
+        }
         return Manager.getInstance().getCommunication().getNextHostInterface();
     }
 

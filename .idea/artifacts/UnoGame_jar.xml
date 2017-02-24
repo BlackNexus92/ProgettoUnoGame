@@ -3,10 +3,10 @@
     <output-path>$PROJECT_DIR$/out/artifacts/UnoGame_jar</output-path>
     <root id="archive" name="UnoGame.jar">
       <element id="module-output" name="UnoGame" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../libgdx-1.6.1/gdx-backend-lwjgl.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../libgdx-1.6.1/gdx-natives.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../libgdx-1.6.1/gdx.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../libgdx-1.6.1/gdx-backend-lwjgl.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../libgdx-1.6.1/gdx-backend-lwjgl-natives.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../libgdx-1.6.1/gdx.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
