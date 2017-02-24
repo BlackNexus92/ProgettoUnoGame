@@ -1,6 +1,7 @@
 package UnoRMI;
 
 import java.io.Serializable;
+import UnoGame.Deck;
 
 /**
  * Created by angelo on 20/02/17.
@@ -22,7 +23,7 @@ public class Player implements Serializable {
     public Player(String username, Host host) {
         this.username = username;
         this.host = host;
-        this.nCards = 7;
+        this.nCards = Deck.HANDSIZE;
     }
 
     public String getUsername() {
