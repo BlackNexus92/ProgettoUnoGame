@@ -53,6 +53,7 @@ public class Card implements Serializable {
     public boolean isCardCompatible(Card b)
     {
         if(this.color==b.color || b.type==Card.PLUSFOURTYPE || b.type==Card.CHANGECOLTYPE) return true;
+        if(b.type!=Card.NUMTYPE && b.type==this.type) return true;
         if(this.type==NUMTYPE && b.type==NUMTYPE && (this.number==b.number)) return true;
         return false;
     }
