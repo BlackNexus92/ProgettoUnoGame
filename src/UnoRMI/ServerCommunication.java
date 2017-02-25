@@ -63,6 +63,8 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             toSendMsg.type = Message.TURN;
             Manager.getInstance().getGameState().initializeHand(Manager.getInstance().getMyPlayer().getId(), Manager.getInstance().getRoom().getNumStartingPlayers());
             Manager.getInstance().getGameState().triggerTopCard();
+            CheckTimer t = new CheckTimer();
+            Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 10);
         }
         else if(m.type == Message.PLAYER) {
             System.out.println("[RETURNED PLAYER MSG] Crashed player removed from Ring!");
@@ -113,6 +115,8 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             System.out.println("[CONFIGURATION MSG] Ring configured!");
             this.configureRing((Room) message.getPayload());
             Manager.getInstance().getGameState().initializeHand(Manager.getInstance().getMyPlayer().getId(), Manager.getInstance().getRoom().getNumStartingPlayers());
+            CheckTimer t = new CheckTimer();
+            Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 10);
         }
         else if(message.type == Message.TURN) {
             System.out.println("[TURN MSG] Turn of player " + (Integer) message.getPayload() +"!");
