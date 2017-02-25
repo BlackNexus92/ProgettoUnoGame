@@ -37,11 +37,11 @@ public class DesktopLauncher {
     public static void main (String[] arg) {
 
         Manager m = Manager.getInstance();
+        m.setIdPlaying(0);
+        m.setWinner(-1);
         m.setGameState(new GameState());
         m.setMyPlayer(new Player());
         m.setRoom(new Room(1));
-        m.setIdPlaying(-1);
-        m.setWinner(-1);
         ConfigPanel sp;
         try { sp = new ConfigPanel(); }
         catch (ParseException e) {e.printStackTrace();}

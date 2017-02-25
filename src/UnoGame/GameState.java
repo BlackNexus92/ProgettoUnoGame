@@ -20,10 +20,12 @@ public class GameState implements Serializable {
 
     private Deck deck;
     private ArrayList<Card> hand;
+    private int cardsToDraw = 0;
+    private int seqNumber = 0;
+
     private boolean canPlay = false;
     private boolean reverse = false;
     private boolean shuffled = false;
-    private int cardsToDraw = 0;
 
     public GameState()
     {
@@ -39,6 +41,9 @@ public class GameState implements Serializable {
 
     public void setDeck(Deck d) { deck = d; }
     public Deck getDeck() { return deck; }
+
+    public int getSeqNumber() { return seqNumber; }
+    public void setSeqNumber(int s) { seqNumber=s; }
 
     public void setHand(ArrayList<Card> h) { hand = h; }
     public ArrayList<Card> getHand() { return hand; }
@@ -66,9 +71,7 @@ public class GameState implements Serializable {
             if(topCard.type==Card.CHANGEDIRTYPE && Manager.getInstance().getRoom().getCurrentPlayers()==2) { canPlay = false; cardsToDraw = 0; }
         }
         if(canPlay && !topCard.existsLegalMove(hand))
-        {
             cardsToDraw = 1;
-        }
 
         topCard.active = false;
 
@@ -91,7 +94,7 @@ public class GameState implements Serializable {
         if(c==null) return;
         Message m = new Message(Manager.getInstance().getMyHost().getUuid(), null);
         m.setIdPlayer(Manager.getInstance().getMyPlayer().getId());
-        m.drawnCards = cardsToDraw;
+
         if(canPlay && deck.getTopCard().isCardCompatible(c))
         {
             if(!removeCardFromHand(c)) return;
@@ -100,15 +103,20 @@ public class GameState implements Serializable {
             if(c.type==Card.CHANGEDIRTYPE) reverse = !reverse;
             if(hand.size()==0) Manager.getInstance().setWinner(Manager.getInstance().getMyPlayer().getId());
 
+            m.setSeqNumber(seqNumber++);
+            m.setPayload(deck);
+            m.setPlayerCards(hand.size());
+
+            if(Manager.getInstance().getGameState().getReverse())
+                m.setIdNextPlayer(Manager.getInstance().getRoom().getPrevious(Manager.getInstance().getMyPlayer()).getId());
+            else
+                m.setIdNextPlayer(Manager.getInstance().getRoom().getNext(Manager.getInstance().getMyPlayer()).getId());
+
 // BROADCAST MESSAGGIO CARTA GIOCATA E CARTE PESCATE
-            if(shuffled) {
+            if(shuffled)
                 m.type = Message.SHUFFLEMOVE;
-                m.setPayload(deck);
-            }
-            else {
+            else
                 m.type = Message.MOVE;
-                m.setPayload(c);
-            }
 
             shuffled=false;
             canPlay = false;
@@ -127,15 +135,20 @@ public class GameState implements Serializable {
         else if(!canPlay || !deck.getTopCard().existsLegalMove(hand))
         {
 
+            m.setSeqNumber(seqNumber++);
+            m.setPayload(deck);
+            m.setPlayerCards(hand.size());
+
+            if(Manager.getInstance().getGameState().getReverse())
+                m.setIdNextPlayer(Manager.getInstance().getRoom().getPrevious(Manager.getInstance().getMyPlayer()).getId());
+            else
+                m.setIdNextPlayer(Manager.getInstance().getRoom().getNext(Manager.getInstance().getMyPlayer()).getId());
+
 // BROADCAST MESSAGGIO TURNO PASSATO E CARTE PESCATE
-            if(shuffled) {
+            if(shuffled)
                 m.type = Message.SHUFFLEPASS;
-                m.setPayload(deck);
-            }
-            else {
+            else
                 m.type = Message.PASS;
-                m.setPayload(null);
-            }
 
             try {
                 Manager.getInstance().getCommunication().getNextHostInterface().send(m);
@@ -152,16 +165,6 @@ public class GameState implements Serializable {
         }
     }
 
-    public void applyCardOtherPlayer(Card c)
-    {
-        if(c==null) return;
-        if(deck.getTopCard().isCardCompatible(c))
-        {
-            c.active = true;
-            deck.setTopCard(c);
-        }
-    }
-
     private boolean removeCardFromHand(Card c)
     {
         for(int i=0;i<hand.size();i++)
@@ -172,6 +175,4 @@ public class GameState implements Serializable {
             }
         return false;
     }
-
-
 }

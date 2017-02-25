@@ -58,10 +58,6 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             processMessage(m);
         else if(m.type == Message.ROOM) {//uuid != my_uuid AND type==Room
             System.out.println("[CONFIGURATION MSG RETURNED] Ring configured, sending Game State!");
-            toSend = true;
-            Manager.getInstance().setIdPlaying(Manager.getInstance().getMyPlayer().getId());
-            toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(), Manager.getInstance().getMyPlayer().getId());
-            toSendMsg.type = Message.TURN;
             Manager.getInstance().getGameState().initializeHand(Manager.getInstance().getMyPlayer().getId(), Manager.getInstance().getRoom().getNumStartingPlayers());
             Manager.getInstance().getGameState().triggerTopCard();
             CheckTimer t = new CheckTimer();
@@ -73,31 +69,9 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         else if(m.type == Message.PLAYER) {
             System.out.println("[RETURNED PLAYER MSG] Crashed player removed from Ring!");
         }
-        else if(m.type == Message.CHECK) { //check msg da inviare quando timer è scaduto
-            Manager.getInstance().getTimer().cancel();
-            toSend = true;
-            toSendMsg = m;
-
-        }
         else if(m.type == Message.MOVE || m.type == Message.PASS || m.type == Message.SHUFFLEPASS || m.type == Message.SHUFFLEMOVE) {
-            System.out.println("[MOVE MSG RETURNED] !");
-            if(Manager.getInstance().getWinner()==Manager.getInstance().getMyPlayer().getId())
-                toSend = false;
-            else
-                toSend = true;
-            if(Manager.getInstance().getGameState().getReverse()) {
-                toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(),
-                        Manager.getInstance().getRoom().getPrevious(Manager.getInstance().getMyPlayer()).getId());
-            }
-            else {
-                toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(),
-                        Manager.getInstance().getRoom().getNext(Manager.getInstance().getMyPlayer()).getId());
-
-            }
-            toSendMsg.type = Message.TURN;
-            Manager.getInstance().setIdPlaying((Integer)toSendMsg.getPayload());
+            System.out.println("[RETURNED MOVE MSG] Move message returned!");
         }
-
 
         if(toSend) {
             try {
@@ -124,41 +98,30 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             Manager.getInstance().setTimer(timer);
             Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 10);
         }
-        else if(message.type == Message.TURN) {
-            System.out.println("[TURN MSG] Turn of player " + (Integer) message.getPayload() +"!");
-            Manager.getInstance().setIdPlaying((Integer) message.getPayload());
-            if(Manager.getInstance().isPlaying())
-                Manager.getInstance().getGameState().triggerTopCard();
-        }
         else if (message.type == Message.PLAYER) {
             System.out.println("[PLAYER MSG] Player " + ((Player) message.getPayload()).getId() + " crashed!");
             CrashManager.getInstance().repairRing((Player) message.getPayload());
         }
         else if(message.type == Message.MOVE || message.type == Message.PASS || message.type == Message.SHUFFLEPASS || message.type == Message.SHUFFLEMOVE) {
 
-            int newCards = message.drawnCards + Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer()).getnCards();
+            if(message.getSeqNumber()>Manager.getInstance().getGameState().getSeqNumber()) {
+                Manager.getInstance().getGameState().setSeqNumber(message.getSeqNumber());
 
-            if(message.type == Message.SHUFFLEPASS || message.type == Message.SHUFFLEMOVE) {
+                Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer()).setnCards(message.getPlayerCards());
                 Manager.getInstance().getGameState().setDeck((Deck) message.getPayload());
-            }
-            else {
-                Manager.getInstance().getGameState().getDeck().drawCards(message.drawnCards);
-            }
 
-            if(message.type == Message.MOVE || message.type == Message.SHUFFLEMOVE) {
-                newCards -= 1;
-                if(message.type == Message.MOVE)
-                    Manager.getInstance().getGameState().applyCardOtherPlayer((Card) message.getPayload());
-                if(Manager.getInstance().getGameState().getDeck().getTopCard().type==Card.CHANGEDIRTYPE)
+                Card c = Manager.getInstance().getGameState().getDeck().getTopCard();
+
+                if (c.type == Card.CHANGEDIRTYPE && c.active)
                     Manager.getInstance().getGameState().setReverse(!Manager.getInstance().getGameState().getReverse());
-            }
 
-            if(message.type==Message.SHUFFLEPASS || message.type==Message.PASS) {
-                Manager.getInstance().getGameState().getDeck().getTopCard().active = false;
-            }
+                if (message.getPlayerCards() == 0) Manager.getInstance().setWinner(message.getIdPlayer());
 
-            Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer()).setnCards(newCards);
-            if(newCards==0) Manager.getInstance().setWinner(message.getIdPlayer());
+                System.out.println("[TURN MSG] Turn of player " + message.getIdNextPlayer() + "!");
+                Manager.getInstance().setIdPlaying(message.getIdNextPlayer());
+                if (Manager.getInstance().isPlaying())
+                    Manager.getInstance().getGameState().triggerTopCard();
+            }
         }
 
 

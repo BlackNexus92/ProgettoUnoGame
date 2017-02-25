@@ -11,12 +11,8 @@ public class Message implements Serializable {
     public static final int PASS = 1;
     public static final int SHUFFLEPASS = 2;
     public static final int SHUFFLEMOVE = 8;
-    public static final int TURN = 4;
     public static final int ROOM = 5;
     public static final int PLAYER = 6;
-    public static final int CHECK = 7;
-
-
 
     private static final long serialVersionUID = 1L;
     /*mittente del messaggio*/
@@ -26,13 +22,20 @@ public class Message implements Serializable {
     /*id del player*/
     private int idPlayer;
 
-    public int type;
+    private int idNextPlayer;
 
-    public int drawnCards;
+    private int seqNumber;
+
+    private int playerCards;
+
+    public int type;
 
     public Message(String u, Object o) {
         this.uuid = u;
         this.payload = o;
+        seqNumber = -1;
+        idNextPlayer = -1;
+        playerCards = -1;
     }
 
     public String getUuid() {
@@ -56,4 +59,16 @@ public class Message implements Serializable {
     public void setIdPlayer(int idPlayer) {
         this.idPlayer = idPlayer;
     }
+
+    public int getIdNextPlayer() { return idNextPlayer; }
+
+    public void setIdNextPlayer(int d) { idNextPlayer=d; }
+
+    public int getSeqNumber() { return seqNumber; }
+
+    public void setSeqNumber(int s) { seqNumber=s; }
+
+    public int getPlayerCards() { return playerCards; }
+
+    public void setPlayerCards(int c) { playerCards = c; }
 }
