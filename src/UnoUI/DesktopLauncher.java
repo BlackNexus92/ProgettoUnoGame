@@ -133,6 +133,7 @@ public class DesktopLauncher {
         System.out.println("[REGISTRATION SERVICE] IN ASCOLTO...");
         ServerRegistration serverRegistration = new ServerRegistration(nPlayers, myPlayer);
         registry.bind("RegistrationService", serverRegistration);
+        serverRegistration.receivedGamestate();
     }
 
 }

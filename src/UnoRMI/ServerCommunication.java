@@ -11,6 +11,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.Time;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -64,7 +65,10 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             Manager.getInstance().getGameState().initializeHand(Manager.getInstance().getMyPlayer().getId(), Manager.getInstance().getRoom().getNumStartingPlayers());
             Manager.getInstance().getGameState().triggerTopCard();
             CheckTimer t = new CheckTimer();
+            Timer timer = new Timer();
+            Manager.getInstance().setTimer(timer);
             Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 10);
+
         }
         else if(m.type == Message.PLAYER) {
             System.out.println("[RETURNED PLAYER MSG] Crashed player removed from Ring!");
@@ -116,6 +120,8 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             this.configureRing((Room) message.getPayload());
             Manager.getInstance().getGameState().initializeHand(Manager.getInstance().getMyPlayer().getId(), Manager.getInstance().getRoom().getNumStartingPlayers());
             CheckTimer t = new CheckTimer();
+            Timer timer = new Timer();
+            Manager.getInstance().setTimer(timer);
             Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 10);
         }
         else if(message.type == Message.TURN) {

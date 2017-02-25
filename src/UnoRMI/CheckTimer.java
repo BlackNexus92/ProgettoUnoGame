@@ -14,6 +14,7 @@ public class CheckTimer extends TimerTask {
         try {
             //todo testare se usare this or Manager.getInstance()
             Manager.getInstance().getCommunication().getNextHostInterface();
+            System.out.println(" CheckTimer ");
             //this.getNextHostInterface().send(toSendMsg);
         } catch (RemoteException e) {
             System.out.println("# REMOTE EXCEPTION # in CheckTimer ");
