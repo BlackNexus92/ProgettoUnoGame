@@ -24,7 +24,6 @@ public class GameState implements Serializable {
     private int seqNumber = 0;
 
     private boolean canPlay = false;
-    private boolean reverse = false;
     private boolean shuffled = false;
 
     public GameState()
@@ -33,9 +32,6 @@ public class GameState implements Serializable {
         hand = new ArrayList<Card>();
         hand.clear();
     }
-
-    public boolean getReverse() { return reverse; }
-    public void setReverse(boolean r) { reverse = r; }
 
     public void setForTurn(boolean t) { canPlay=t; if(t) shuffled=false; }
 
@@ -100,17 +96,18 @@ public class GameState implements Serializable {
             if(!removeCardFromHand(c)) return;
             c.active = true;
             deck.setTopCard(c);
-            if(c.type==Card.CHANGEDIRTYPE) reverse = !reverse;
+            if(c.type==Card.CHANGEDIRTYPE) deck.setReverse(!deck.getReverse());
             if(hand.size()==0) Manager.getInstance().setWinner(Manager.getInstance().getMyPlayer().getId());
 
             m.setSeqNumber(seqNumber++);
             m.setPayload(deck);
             m.setPlayerCards(hand.size());
 
-            if(Manager.getInstance().getGameState().getReverse())
+            if(Manager.getInstance().getGameState().getDeck().getReverse())
                 m.setIdNextPlayer(Manager.getInstance().getRoom().getPrevious(Manager.getInstance().getMyPlayer()).getId());
             else
                 m.setIdNextPlayer(Manager.getInstance().getRoom().getNext(Manager.getInstance().getMyPlayer()).getId());
+            Manager.getInstance().setIdPlaying(m.getIdNextPlayer());
 
 // BROADCAST MESSAGGIO CARTA GIOCATA E CARTE PESCATE
             if(shuffled)
@@ -139,10 +136,11 @@ public class GameState implements Serializable {
             m.setPayload(deck);
             m.setPlayerCards(hand.size());
 
-            if(Manager.getInstance().getGameState().getReverse())
+            if(Manager.getInstance().getGameState().getDeck().getReverse())
                 m.setIdNextPlayer(Manager.getInstance().getRoom().getPrevious(Manager.getInstance().getMyPlayer()).getId());
             else
                 m.setIdNextPlayer(Manager.getInstance().getRoom().getNext(Manager.getInstance().getMyPlayer()).getId());
+            Manager.getInstance().setIdPlaying(m.getIdNextPlayer());
 
 // BROADCAST MESSAGGIO TURNO PASSATO E CARTE PESCATE
             if(shuffled)

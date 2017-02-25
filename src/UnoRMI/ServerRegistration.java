@@ -24,6 +24,8 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
         this.room = new Room(n);
         this.gameState = new GameState();
         Manager.getInstance().setGameState(this.gameState);
+        Manager.getInstance().setIdPlaying(0);
+        Manager.getInstance().setWinner(-1);
         this.addPlayer(p);
     }
 

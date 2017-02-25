@@ -71,6 +71,8 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         }
         else if(m.type == Message.MOVE || m.type == Message.PASS || m.type == Message.SHUFFLEPASS || m.type == Message.SHUFFLEMOVE) {
             System.out.println("[RETURNED MOVE MSG] Move message returned!");
+            if(Manager.getInstance().getRoom().getCurrentPlayers()==1)
+                updateGamestate(m);
         }
 
         if(toSend) {
@@ -103,25 +105,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             CrashManager.getInstance().repairRing((Player) message.getPayload());
         }
         else if(message.type == Message.MOVE || message.type == Message.PASS || message.type == Message.SHUFFLEPASS || message.type == Message.SHUFFLEMOVE) {
-
-            if(message.getSeqNumber()>Manager.getInstance().getGameState().getSeqNumber()) {
-                Manager.getInstance().getGameState().setSeqNumber(message.getSeqNumber());
-
-                Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer()).setnCards(message.getPlayerCards());
-                Manager.getInstance().getGameState().setDeck((Deck) message.getPayload());
-
-                Card c = Manager.getInstance().getGameState().getDeck().getTopCard();
-
-                if (c.type == Card.CHANGEDIRTYPE && c.active)
-                    Manager.getInstance().getGameState().setReverse(!Manager.getInstance().getGameState().getReverse());
-
-                if (message.getPlayerCards() == 0) Manager.getInstance().setWinner(message.getIdPlayer());
-
-                System.out.println("[TURN MSG] Turn of player " + message.getIdNextPlayer() + "!");
-                Manager.getInstance().setIdPlaying(message.getIdNextPlayer());
-                if (Manager.getInstance().isPlaying())
-                    Manager.getInstance().getGameState().triggerTopCard();
-            }
+            updateGamestate(message);
         }
 
 
@@ -136,12 +120,36 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         }
     }
 
+    private void updateGamestate(Message message) {
+        //todo gestione sequence number equivalenti
+        if(message.getSeqNumber()>=Manager.getInstance().getGameState().getSeqNumber()) {
+
+            Manager.getInstance().getGameState().setSeqNumber(message.getSeqNumber());
+
+            Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer()).setnCards(message.getPlayerCards());
+            Manager.getInstance().getGameState().setDeck((Deck) message.getPayload());
+
+            Card c = Manager.getInstance().getGameState().getDeck().getTopCard();
+
+            if (message.getPlayerCards() == 0) Manager.getInstance().setWinner(message.getIdPlayer());
+
+            System.out.println("[TURN MSG] Turn of player " + message.getIdNextPlayer() + "!");
+            Manager.getInstance().setIdPlaying(message.getIdNextPlayer());
+            if (Manager.getInstance().isPlaying())
+                Manager.getInstance().getGameState().triggerTopCard();
+        }
+    }
+
+
     public InterfaceCommunication getNextHostInterface() throws RemoteException, ServerNotActiveException, NotBoundException {
         InterfaceCommunication remote = null;
         Player myPlayer = Manager.getInstance().getMyPlayer();
         //todo scegliere next o previous
         Player nextPlayer;
-        nextPlayer = Manager.getInstance().getRoom().getNext(myPlayer);
+        if(Manager.getInstance().getGameState().getDeck().getReverse())
+            nextPlayer = Manager.getInstance().getRoom().getPrevious(myPlayer);
+        else
+            nextPlayer = Manager.getInstance().getRoom().getNext(myPlayer);
 
         Registry register = null;
 

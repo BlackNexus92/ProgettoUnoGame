@@ -29,16 +29,18 @@ public class CrashManager {
 
         Message toSendMsg = null;
         if(Manager.getInstance().getIdPlaying() == p.getId()) {
-            if (Manager.getInstance().getGameState().getReverse()) {
-                toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(),
-                        Manager.getInstance().getRoom().getPrevious(p).getId());
+            toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(),null);
+            if (Manager.getInstance().getGameState().getDeck().getReverse()) {
+                toSendMsg.setIdNextPlayer(Manager.getInstance().getRoom().getPrevious(p).getId());
             } else {
-                toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(),
-                        Manager.getInstance().getRoom().getNext(p).getId());
-
+                toSendMsg.setIdNextPlayer(Manager.getInstance().getRoom().getNext(p).getId());
             }
-            toSendMsg.type = Message.TURN;
-            Manager.getInstance().setIdPlaying((Integer) toSendMsg.getPayload());
+            toSendMsg.type = Message.PASS;
+            toSendMsg.setPayload(Manager.getInstance().getGameState().getDeck());
+            toSendMsg.setSeqNumber(Manager.getInstance().getGameState().getSeqNumber());
+            toSendMsg.setPlayerCards(Manager.getInstance().getGameState().getHand().size());
+            toSendMsg.setIdPlayer(Manager.getInstance().getMyPlayer().getId());
+            Manager.getInstance().setIdPlaying((Integer) toSendMsg.getIdNextPlayer());
 
             try {
                 //todo testare se usare this or Manager.getInstance()

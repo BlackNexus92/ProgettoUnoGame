@@ -22,6 +22,7 @@ public class Deck implements Serializable {
 
     private ArrayList<Card> activeDeck;
     private ArrayList<Card> discardedDeck;
+    private boolean reverse = false;
     private Card topCard;
 
     public Deck()
@@ -129,6 +130,9 @@ public class Deck implements Serializable {
     }
 
     public int size() { return activeDeck.size(); }
+
+    public boolean getReverse() { return reverse; }
+    public void setReverse(boolean r) { reverse = r; }
 
     public Card getTopCard() { return topCard; }
 
