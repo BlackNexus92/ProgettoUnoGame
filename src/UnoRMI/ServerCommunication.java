@@ -121,7 +121,6 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
     }
 
     private void updateGamestate(Message message) {
-        //todo gestione sequence number equivalenti
         Player p = Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer());
         if(message.getSeqNumber()>=Manager.getInstance().getGameState().getSeqNumber() && p!=null) {
             Manager.getInstance().getGameState().setSeqNumber(message.getSeqNumber());
@@ -145,7 +144,6 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
     public InterfaceCommunication getNextHostInterface() throws RemoteException, ServerNotActiveException, NotBoundException {
         InterfaceCommunication remote = null;
         Player myPlayer = Manager.getInstance().getMyPlayer();
-        //todo scegliere next o previous
         Player nextPlayer;
         if(Manager.getInstance().getGameState().getDeck().getReverse())
             nextPlayer = Manager.getInstance().getRoom().getPrevious(myPlayer);
@@ -168,4 +166,5 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
 
         return remote;
     }
+
 }
