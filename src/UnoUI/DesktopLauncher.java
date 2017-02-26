@@ -42,6 +42,7 @@ public class DesktopLauncher {
         m.setRoom(new Room(1));
         m.setIdPlaying(0);
         m.setWinner(-1);
+        m.setStatusString("Gioco in fase di inizializzazione...");
         ConfigPanel sp;
         try { sp = new ConfigPanel(); }
         catch (ParseException e) {e.printStackTrace();}

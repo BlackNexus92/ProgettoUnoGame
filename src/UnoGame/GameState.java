@@ -9,6 +9,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.util.ArrayList;
 import java.io.Serializable;
+import UnoRMI.Player;
 
 /**
  * Created by TheNexus on 20/02/17.
@@ -97,7 +98,6 @@ public class GameState implements Serializable {
             c.active = true;
             deck.setTopCard(c);
             if(c.type==Card.CHANGEDIRTYPE) deck.setReverse(!deck.getReverse());
-            if(hand.size()==0) Manager.getInstance().setWinner(Manager.getInstance().getMyPlayer().getId());
 
             m.setSeqNumber(++seqNumber);
             m.setPayload(deck);
@@ -108,6 +108,15 @@ public class GameState implements Serializable {
             else
                 m.setIdNextPlayer(Manager.getInstance().getRoom().getNext(Manager.getInstance().getMyPlayer()).getId());
             Manager.getInstance().setIdPlaying(m.getIdNextPlayer());
+
+            if(hand.size()==0) {
+                Manager.getInstance().setWinner(Manager.getInstance().getMyPlayer().getId());
+                Manager.getInstance().setStatusString("Hai vinto!");
+            }
+            else {
+                Player p = Manager.getInstance().getRoom().getPlayerFromId(m.getIdNextPlayer());
+                if(p!=null) Manager.getInstance().setStatusString(p.getUsername() + " gioca il suo turno...");
+            }
 
 // BROADCAST MESSAGGIO CARTA GIOCATA E CARTE PESCATE
             if(shuffled)

@@ -145,6 +145,8 @@ public class UnoUIMain implements Screen {
         pt22font.draw(batch, glyphLayout, 10, 230);
         glyphLayout.setText(pt22font, "Mano: " + gamestate.getHand().size() + " carte");
         pt22font.draw(batch, glyphLayout, 1014 - glyphLayout.width, 230);
+        glyphLayout.setText(pt22font,manager.getStatusString());
+        pt22font.draw(batch,glyphLayout,512 - glyphLayout.width/2,230);
         setPlayerRing(batch,shaperenderer);
         topCardSprite.draw(batch);
         pt22font.setColor(1.0f,1.0f,1.0f,1.0f);

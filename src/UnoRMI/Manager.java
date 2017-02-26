@@ -23,6 +23,7 @@ public class Manager {
     private int idPlaying;
     private int winner;
     private Timer timer;
+    private String statusString;
 
     //todo aggiungere variabili?
 
@@ -31,6 +32,10 @@ public class Manager {
             instance = new Manager();
         return instance;
     }
+
+    public String getStatusString() { if(statusString==null) return " "; else return this.statusString; }
+
+    public void setStatusString(String s) { this.statusString = s; }
 
     public Player getMyPlayer() {
         return this.player;

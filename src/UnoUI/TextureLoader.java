@@ -114,7 +114,6 @@ public class TextureLoader {
             Texture texture = new Texture(Gdx.files.internal("res/arial22.png"));
             texture.setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);
             pt22font = new BitmapFont(Gdx.files.internal("res/arial22.fnt"), new TextureRegion(texture), false);
-            //pt50font.getData().setScale(0.5f);
         }
         return pt22font;
     }

@@ -41,9 +41,6 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
     }
 
     public void send(Message m) throws RemoteException, ServerNotActiveException {
-        //Timer t = new Timer();
-        //t.schedule(new TimerTask(),delay);
-
         try{
             System.out.println("[MSG RECEIVED] Msg from :" + Manager.getInstance().getIpFromUuid(m.getUuid()) +
                     "  -  type:"+ m.getPayload().getClass());
@@ -58,6 +55,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             processMessage(m);
         else if(m.type == Message.ROOM) {//uuid != my_uuid AND type==Room
             System.out.println("[CONFIGURATION MSG RETURNED] Ring configured, sending Game State!");
+            Manager.getInstance().setStatusString("Gioca il tuo turno!");
             Manager.getInstance().getGameState().initializeHand(Manager.getInstance().getMyPlayer().getId(), Manager.getInstance().getRoom().getNumStartingPlayers());
             Manager.getInstance().getGameState().triggerTopCard();
             CheckTimer t = new CheckTimer();
@@ -95,6 +93,8 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             System.out.println("[CONFIGURATION MSG] Ring configured!");
             this.configureRing((Room) message.getPayload());
             Manager.getInstance().getGameState().initializeHand(Manager.getInstance().getMyPlayer().getId(), Manager.getInstance().getRoom().getNumStartingPlayers());
+            Player p = Manager.getInstance().getRoom().getPlayerFromId(0);
+            if(p!=null) Manager.getInstance().setStatusString(p.getUsername() + " gioca il suo turno...");
             CheckTimer t = new CheckTimer();
             Timer timer = new Timer();
             Manager.getInstance().setTimer(timer);
@@ -102,6 +102,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         }
         else if (message.type == Message.PLAYER) {
             System.out.println("[PLAYER MSG] Player " + ((Player) message.getPayload()).getId() + " crashed!");
+            Manager.getInstance().setStatusString("Il giocatore "+((Player) message.getPayload()).getId()+" ha abbandonato la partita.");
             CrashManager.getInstance().repairRing((Player) message.getPayload());
         }
         else if(message.type == Message.MOVE || message.type == Message.PASS || message.type == Message.SHUFFLEPASS || message.type == Message.SHUFFLEMOVE) {
@@ -130,12 +131,22 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
 
             Card c = Manager.getInstance().getGameState().getDeck().getTopCard();
 
-            if (message.getPlayerCards() == 0) Manager.getInstance().setWinner(message.getIdPlayer());
+            if (message.getPlayerCards() == 0) {
+                Manager.getInstance().setWinner(message.getIdPlayer());
+                Player p2 = Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer());
+                if(p2!=null) Manager.getInstance().setStatusString(p2.getUsername() + " ha vinto.");
+            }
 
             System.out.println("[TURN MSG] Turn of player " + message.getIdNextPlayer() + "!");
+
             Manager.getInstance().setIdPlaying(message.getIdNextPlayer());
             if (Manager.getInstance().isPlaying()) {
+                Manager.getInstance().setStatusString("Gioca il tuo turno!");
                 Manager.getInstance().getGameState().triggerTopCard();
+            }
+            else {
+                Player p2 = Manager.getInstance().getRoom().getPlayerFromId(message.getIdNextPlayer());
+                if(p2!=null) Manager.getInstance().setStatusString(p2.getUsername() + " gioca il suo turno...");
             }
         }
     }

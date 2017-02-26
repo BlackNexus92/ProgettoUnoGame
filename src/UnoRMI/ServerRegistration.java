@@ -47,6 +47,7 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
             Manager.getInstance().setRoom(this.room);
             //todo
             Message m = new Message(uuid,this.room);
+            m.setIdPlayer(Manager.getInstance().getMyPlayer().getId());
             m.type = Message.ROOM;
             try {
                 Manager.getInstance().getCommunication().getNextHostInterface().send(m);
