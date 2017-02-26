@@ -99,7 +99,7 @@ public class GameState implements Serializable {
             if(c.type==Card.CHANGEDIRTYPE) deck.setReverse(!deck.getReverse());
             if(hand.size()==0) Manager.getInstance().setWinner(Manager.getInstance().getMyPlayer().getId());
 
-            m.setSeqNumber(seqNumber++);
+            m.setSeqNumber(++seqNumber);
             m.setPayload(deck);
             m.setPlayerCards(hand.size());
 
@@ -132,7 +132,7 @@ public class GameState implements Serializable {
         else if(!canPlay || !deck.getTopCard().existsLegalMove(hand))
         {
 
-            m.setSeqNumber(seqNumber++);
+            m.setSeqNumber(++seqNumber);
             m.setPayload(deck);
             m.setPlayerCards(hand.size());
 
@@ -148,6 +148,9 @@ public class GameState implements Serializable {
             else
                 m.type = Message.PASS;
 
+            shuffled = false;
+            canPlay = false;
+
             try {
                 Manager.getInstance().getCommunication().getNextHostInterface().send(m);
             } catch (RemoteException e) {
@@ -158,8 +161,6 @@ public class GameState implements Serializable {
                 System.out.println("# SERVER NOT ACTIVE EXCEPTION # in ServerCommunication.send ");
             }
 
-            shuffled = false;
-            canPlay = false;
         }
     }
 

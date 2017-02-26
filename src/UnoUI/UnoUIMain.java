@@ -217,26 +217,25 @@ public class UnoUIMain implements Screen {
     private void setPlayerRing(SpriteBatch batch,ShapeRenderer sr)
     {
         ArrayList<Player> players = room.getPlayers();
-        int i = 1,playerID;
+        int id = 1,i=0,playerID;
         Player p;
-        Iterator it = players.iterator();
         playerID = Manager.getInstance().getMyPlayer().getId();
 // Ciclo fino a trovare l'istanza del player nell'arraylist
-        while(it.hasNext()) {
-            p = (Player)it.next();
+        while(i<players.size()) {
+            p = players.get(i++);
             if(p.getId()==playerID)
                 break; }
 // Disegno i players successivi al giocatore
-        while(it.hasNext()) {
-            p = (Player)it.next();
-            drawPlayerRing(batch,sr,p,i++,players.size()); }
+        while(i<players.size()) {
+            p = players.get(i);
+            drawPlayerRing(batch,sr,p,id++,players.size()); }
 // Disegno i restanti players successivi al giocatore, riavvolgendo l'iteratore
-        it = players.iterator();
-        while(it.hasNext()) {
-            p = (Player)it.next();
+        i = 0;
+        while(i<players.size()) {
+            p = players.get(i);
             if(p.getId()==playerID)
                 break;
-            drawPlayerRing(batch,sr,p,i++,players.size()); }
+            drawPlayerRing(batch,sr,p,id++,players.size()); }
     }
 
     private void drawPlayerRing(SpriteBatch batch,ShapeRenderer sr, Player p, int i, int nPlayers)

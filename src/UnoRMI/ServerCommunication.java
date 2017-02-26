@@ -122,11 +122,11 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
 
     private void updateGamestate(Message message) {
         //todo gestione sequence number equivalenti
-        if(message.getSeqNumber()>=Manager.getInstance().getGameState().getSeqNumber()) {
-
+        Player p = Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer());
+        if(message.getSeqNumber()>=Manager.getInstance().getGameState().getSeqNumber() && p!=null) {
             Manager.getInstance().getGameState().setSeqNumber(message.getSeqNumber());
 
-            Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer()).setnCards(message.getPlayerCards());
+            p.setnCards(message.getPlayerCards());
             Manager.getInstance().getGameState().setDeck((Deck) message.getPayload());
 
             Card c = Manager.getInstance().getGameState().getDeck().getTopCard();
@@ -135,8 +135,9 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
 
             System.out.println("[TURN MSG] Turn of player " + message.getIdNextPlayer() + "!");
             Manager.getInstance().setIdPlaying(message.getIdNextPlayer());
-            if (Manager.getInstance().isPlaying())
+            if (Manager.getInstance().isPlaying()) {
                 Manager.getInstance().getGameState().triggerTopCard();
+            }
         }
     }
 
