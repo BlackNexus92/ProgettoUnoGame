@@ -28,14 +28,17 @@ import java.text.ParseException;
 
 public class DesktopLauncher {
 
+// Porta di comunicazione e variabile Registry relativa al lookup RMI sull'host considerato
     private static int PORT = 1234;
     private static Registry registry;
 
+// Risoluzione dell'applicazione
     public static int resX = 1024;
     public static int resY = 768;
 
     public static void main (String[] arg) {
-
+// Credo una istanza del Gamestate, Player e Room fittizia: non appena il giocatore si unira' ad una partita, o
+// diventera' Server, queste saranno nuovamente allocate con i dati reali di gioco
         Manager m = Manager.getInstance();
         m.setGameState(new GameState());
         m.setMyPlayer(new Player());
@@ -43,12 +46,14 @@ public class DesktopLauncher {
         m.setIdPlaying(0);
         m.setWinner(-1);
         m.setStatusString("Gioco in fase di inizializzazione...");
+// Abilito il pannello di configurazione del gioco
         ConfigPanel sp;
         try { sp = new ConfigPanel(); }
         catch (ParseException e) {e.printStackTrace();}
  //       bootGUI();
     }
 
+// Metodo atto a creare il contesto OpenGL associato all'interfaccia grafica, quando questa deve essere avviata
     public static void bootGUI()
     {
         new Thread(new Runnable() {
@@ -63,19 +68,11 @@ public class DesktopLauncher {
         }).start();
     }
 
-    /**
-     * Connessione alla partita
-     * @param sp finestra di configurazione
-     * @throws RemoteException
-     * @throws AlreadyBoundException
-     * @throws UnknownHostException
-     * @throws SocketException
-     * @throws NotBoundException
-     * @throws InterruptedException
-     * @throws ServerNotActiveException
-     */
+// Metodo che recupera le informazioni memorizzate dal pannello di configurazione (Username, IP server) e tenta una connessione
+// con lo stesso, oppure avvia il server di registrazione se sono io stesso il server
     public static void connect(ConfigPanel sp) throws RemoteException, AlreadyBoundException, UnknownHostException, SocketException, NotBoundException, InterruptedException, ServerNotActiveException {
         String IP = sp.getServerIP();
+// Se sono il server di registrazione, avvio il relativo servizio ed aggiungo me stesso alla nuova Room
         if (IP.equals("SERVER")) {
             bootGUI();
             int nPlayers = sp.getNPlayers();
@@ -86,7 +83,7 @@ public class DesktopLauncher {
             startDeamon();
             startDeamonRegistration(nPlayers, myPlayer);
         }
-        //se gioco da solo
+// Altrimenti, tento una connessione con il server tramite il metodo addPlayer
         else if (IP.startsWith("1")) {
             bootGUI();
             startDeamon();
@@ -96,6 +93,7 @@ public class DesktopLauncher {
             String username = sp.getUsername();
             Host myHost = new Host(NetworkUtility.getInstance().getHostAddress(), PORT);
             Player myPlayer = new Player(username, myHost);
+// Il giocatore alloca il proprio oggetto Player (ma non ne imposta ancora l'ID), ed aggiunge se stesso alla Room
             Manager.getInstance().setMyPlayer(myPlayer);
             Manager.getInstance().setGameState(registrationServer.addPlayer(myPlayer));
             registrationServer.receivedGamestate();
@@ -103,13 +101,7 @@ public class DesktopLauncher {
         }
     }
 
-    /**
-     * Inizializzazione del Demone server in ascolto
-     * @throws UnknownHostException
-     * @throws SocketException
-     * @throws RemoteException
-     * @throws AlreadyBoundException
-     */
+// Metodo che si occupa di inizializzare il servizio RMI in ascolto, relativo alla comunicazione di gioco
     public static void startDeamon() throws UnknownHostException, SocketException, RemoteException, AlreadyBoundException {
         System.setProperty("java.rmi.server.hostname", NetworkUtility.getInstance().getHostAddress());
         System.setProperty("java.rmi.disableHttp", "true");
@@ -120,16 +112,7 @@ public class DesktopLauncher {
         registry.bind("Communication", server);
     }
 
-    /**
-     * Inizializzazione del demone server di registrazione in ascolto
-     * @param nPlayers
-     * @param myPlayer
-     * @throws AccessException
-     * @throws RemoteException
-     * @throws AlreadyBoundException
-     * @throws InterruptedException
-     * @throws ServerNotActiveException
-     */
+// Metodo atto ad inizializzare il servizio RMI di registrazione, relativo al server, e richiamato dagli altri giocatori
     public static void startDeamonRegistration(int nPlayers, Player myPlayer) throws AccessException, RemoteException, AlreadyBoundException, InterruptedException, ServerNotActiveException {
         System.out.println("[REGISTRATION SERVICE] IN ASCOLTO...");
         ServerRegistration serverRegistration = new ServerRegistration(nPlayers, myPlayer);

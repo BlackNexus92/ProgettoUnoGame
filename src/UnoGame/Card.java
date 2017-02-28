@@ -7,11 +7,12 @@ import java.util.ArrayList;
  * Created by TheNexus on 19/02/17.
  */
 
+// Classe atta a codificare le carte del gioco di Uno, ed i relativi vincoli
 public class Card implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-// Attributi di tipo relativi alle carte
+// Costanti di tipo relative alle carte
     public static final int NUMTYPE = 0;
     public static final int BLOCKTYPE = 1;
     public static final int CHANGEDIRTYPE = 2;
@@ -19,14 +20,14 @@ public class Card implements Serializable {
     public static final int PLUSFOURTYPE = 4;
     public static final int CHANGECOLTYPE = 5;
 
-// Attributi di colore relativi alle carte
+// Costanti di colore relative alle carte
     public static final int RED = 0;
     public static final int BLUE = 3;
     public static final int GREEN = 2;
     public static final int YELLOW = 1;
     public static final int COLORLESS = 4;
 
-// Colore, numero e tipo delle carte
+// Colore, numero e tipo della carta
     public int color;
     public int number;
     public int type;

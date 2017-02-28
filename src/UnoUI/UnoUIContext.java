@@ -6,6 +6,7 @@ package UnoUI;
 
 import com.badlogic.gdx.*;
 
+// Classe di gestione del contesto OpenGL
 public class UnoUIContext extends Game {
 
     public void create() {

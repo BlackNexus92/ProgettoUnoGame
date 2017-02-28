@@ -1,16 +1,20 @@
 package UnoUI;
 
+/**
+ * Created by TheNexus on 21/02/17.
+ */
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import UnoGame.Card;
 
-/**
- * Created by TheNexus on 21/02/17.
- */
+// Classe atta alla gestione statica delle risorse Texture e font, che sono allocate una sola volta
+// per poi essere riutilizzate
 public class TextureLoader {
 
+// Oggetti Texture e variabili di appoggio
     private static TextureRegion topCardTex;
     private static Texture deckTex;
     private static int tx;
@@ -20,12 +24,16 @@ public class TextureLoader {
     private static Texture ccTex;
     private static boolean hasChanged = false;
 
+// Oggetto font
     private static BitmapFont pt22font;
 
+// CardBox per la memorizzazione e renderizzazione della mano del giocatore
     private static CardBox cardBox;
     public static final int cardBoxW = 1024;
     public static final int cardBoxH = 210;
 
+// Costanti che permettono la localizzazione delle TextureRegion relative alle singole carte nella Texture del
+// mazzo complessivo
     private static final int blockX = 10;
     private static final int reverseX = 11;
     private static final int plustwoX = 12;
@@ -36,6 +44,8 @@ public class TextureLoader {
     private static final int numCols = 14;
 
 
+// Il flag hasChanged determina se la mano e/o la carta in cima al mazzo siano cambiate, cosicche' il thread di rendering
+// debba ri-aggiornarle
     public synchronized static void setChanged() { hasChanged=true; }
 
     public synchronized static boolean hasChanged()
@@ -49,8 +59,10 @@ public class TextureLoader {
             return false;
     }
 
+// Recupera e memorizza la TextureRegion relativa alla particolare carta di input
     public static TextureRegion loadCardTexture(Card c)
     {
+// Carica la Texture del deck, se non ancora in memoria
         if(deckTex==null)
         {
             deckTex = new Texture(Gdx.files.internal("res/unoDeckTexture.png"));
@@ -58,6 +70,7 @@ public class TextureLoader {
             ty = deckTex.getHeight()/numRows;
             deckTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         }
+// Recupera la specifica TextureRegion dalla Texture a seconda della tipologia e numero della carta
         TextureRegion r = null;
         if(c.type==Card.PLUSFOURTYPE)
             r = new TextureRegion(deckTex,tx*wildX,ty*plusfourY,tx,ty);
@@ -74,11 +87,13 @@ public class TextureLoader {
         return r;
     }
 
+// Imposta la texture relativa alla carta in cima al mazzo, in base alla carta di input
     public static void setTopCardTexture(Card c)
     {
         topCardTex = loadCardTexture(c);
     }
 
+// Restituisce l'oggetto TextureRegion corrente associato alla carta in cima al mazzo
     public static TextureRegion getTopCardTexture()
     {
         if(topCardTex==null)
@@ -88,6 +103,8 @@ public class TextureLoader {
         }
         return topCardTex;
     }
+
+// Metodi per il recupero di altre risorse grafiche statiche: Texture di vario genere, ed il BitmapFont utilizzato
 
     public static Texture loadCoveredCardTexture()
     {
@@ -118,6 +135,7 @@ public class TextureLoader {
         return pt22font;
     }
 
+// Restituisce l'oggetto CardBox associato alla mano del giocatore, anch'esso gestito in modo statico
     public static CardBox getCardBox() {
         if(cardBox==null) {
             cardBox = new CardBox(0, 0, cardBoxW, cardBoxH);
@@ -125,6 +143,7 @@ public class TextureLoader {
         return cardBox;
     }
 
+// Rilascia tutte le risorse grafiche presenti in memoria
     public static void dispose()
     {
         deckTex.dispose();

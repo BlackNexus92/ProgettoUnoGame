@@ -24,12 +24,15 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+// Classe che implementa l'interfaccia di gioco vera e propria
 public class UnoUIMain implements Screen {
 
+// Oggetti grafici per il rendering della scena
     private SpriteBatch batch;
     private ShapeRenderer shaperenderer;
     private OrthographicCamera camera;
 
+// Oggetti Sprite e BitmapFont relativi agli oggetti di gioco da renderizzare
     private Sprite bgSprite;
     private Sprite cardSprite;
     private Sprite topCardSprite;
@@ -37,16 +40,20 @@ public class UnoUIMain implements Screen {
     private BitmapFont pt22font;
     private GlyphLayout glyphLayout;
 
+// Oggetto relativo al contesto OpenGL corrente
     private Game unoContext;
 
+// Oggetti relativi alla logica di gioco ed alla comunicazione
     private Manager manager;
     private GameState gamestate;
     private Room room;
 
+// Oggetto CardBox per il rendering della mano del giocatore
     private CardBox cardBox;
     private int cardBoxW;
     private int cardBoxH;
 
+// Costanti e variabili di miscellanea
     private Card chosenCard;
     private boolean choosingColor;
 
@@ -60,6 +67,7 @@ public class UnoUIMain implements Screen {
     private float lastClick;
 
     public UnoUIMain(Game g) {
+// Inizializzo gli oggetti relativi al rendering ed imposto la camera di gioco
         unoContext = g;
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
@@ -68,6 +76,7 @@ public class UnoUIMain implements Screen {
         batch.setProjectionMatrix(camera.combined.scale(1, 1, 1));
         shaperenderer = new ShapeRenderer();
 
+// Inizializzo gli oggetti Sprite iniziali, ed il BitmapFont
         bgSprite = new Sprite(TextureLoader.loadBGTexture());
         bgSprite.setSize(DesktopLauncher.resX, DesktopLauncher.resY);
         bgSprite.setPosition(0, 0);
@@ -82,6 +91,7 @@ public class UnoUIMain implements Screen {
         pt22font = TextureLoader.get22ptFont();
         glyphLayout = new GlyphLayout();
 
+// Recupero le istanze relative agli oggetti di comunicazione e di gioco, già inizializzati
         manager = Manager.getInstance();
         room = Manager.getInstance().getRoom();
         gamestate = manager.getGameState();
@@ -95,6 +105,8 @@ public class UnoUIMain implements Screen {
 
         delta = 0;
         lastClick = 0;
+        chosenCard = null;
+        choosingColor = false;
     }
 
     @Override
@@ -109,6 +121,7 @@ public class UnoUIMain implements Screen {
     @Override
     public void show() {}
 
+// Libera la memoria relativa agli oggetti della scena
     @Override
     public void dispose() {
         shaperenderer.dispose();
@@ -116,6 +129,7 @@ public class UnoUIMain implements Screen {
         TextureLoader.dispose();
     }
 
+// Metodo per il resize della finestra, non utilizzato
     @Override
     public void resize(int x, int y) {
         float sx = (float) x / DesktopLauncher.resX;
@@ -126,17 +140,23 @@ public class UnoUIMain implements Screen {
         batch.setProjectionMatrix(camera.combined.scale(sx, sy, 1));
     }
 
+// Metodo di callback per il rendering, richiamato automaticamente dal contesto OpenGL
     @Override
     public void render(float delta) {
+// Recupero gli stati aggiornati del GameState e della room di gioco
         gamestate = manager.getGameState();
         room = Manager.getInstance().getRoom();
+// Se ci sono state variazioni relative agli oggetti grafici della mano o della carta in cima al mazzo, aggiorno
+// e recupero questi
         if(TextureLoader.hasChanged())
         {
             TextureLoader.setTopCardTexture(gamestate.getDeck().getTopCard());
             topCardSprite.setRegion(TextureLoader.getTopCardTexture());
             cardBox.refreshPane(gamestate.getHand());
         }
+// Elaboro l'input del giocatore
         processInput();
+// Avvio il rendering vero e proprio della scena
         Gdx.gl.glClearColor(0.6f, 0.2f, 0.0f, 1.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
@@ -161,13 +181,18 @@ public class UnoUIMain implements Screen {
         Gdx.gl.glDisable(Gdx.gl20.GL_BLEND);
     }
 
+// Metodo atto ad elaborare l'input corrente del giocatore
     private void processInput() {
         delta += 1000 * Gdx.graphics.getDeltaTime();
+// Recupero le coordinate correnti del mouse
         int x = Gdx.input.getX();
         int y = Gdx.graphics.getHeight() - Gdx.input.getY();
 
+// Se è stato effettuato un click, e sono nel mio turno, tento l'elaborazione
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && Manager.getInstance().isPlaying() && delta - lastClick > 250) {
             lastClick = delta;
+// Se sono in fase choosingColor, ossia ho scelto una carta cambio colore e sto scegliendo lo stesso, elaboro
+// il colore scelto
             if (choosingColor) {
                 if (y >= 0 && y < cardBoxH) {
                     if (x < 0) x = 0;
@@ -175,6 +200,8 @@ public class UnoUIMain implements Screen {
                     chosenCard.color = (x * 4) / cardBoxW;
                     choosingColor = false;
                 }
+// Altrimenti, seleziono una carta dalla mano in base alle coordinate del click, e se si tratta di una carta con
+// cambio colore, abilito la fase choosingColor
             } else {
                 chosenCard = cardBox.selectedCard(x, y);
                 if (chosenCard != null && (chosenCard.type == Card.CHANGECOLTYPE || chosenCard.type == Card.PLUSFOURTYPE))
@@ -183,13 +210,16 @@ public class UnoUIMain implements Screen {
                     choosingColor = false;
             }
         }
-        if (chosenCard != null && !choosingColor) {
+// Se la fase di selezione della carta è completata, applico questa sul GameState, e concludo il mio turno
+        if (chosenCard != null && !choosingColor && Manager.getInstance().isPlaying()) {
             gamestate.applyCard(chosenCard);
             chosenCard = null;
             choosingColor = false;
         }
     }
 
+// Metodo che renderizza un semplice segnalino del colore relativo alla carta in cima al mazzo, tramite uno
+// shaperenderer
     private void drawColorSignal(ShapeRenderer sr)
     {
         int color = gamestate.getDeck().getTopCard().color;
@@ -204,6 +234,7 @@ public class UnoUIMain implements Screen {
         shaperenderer.rect(topCardSprite.getX()+topCardSprite.getWidth()+10,topCardSprite.getY(),30,30);
     }
 
+// Renderizza il box di selezione colori, quando viene scelta una carta con cambio colore
     private void drawColorChooser(ShapeRenderer sr)
     {
         sr.setColor(1.0f,0.0f,0.0f,0.7f);
@@ -216,13 +247,18 @@ public class UnoUIMain implements Screen {
         sr.rect(cardBoxW*3/4,0,cardBoxW/4,cardBoxH);
     }
 
+// Metodo che gestisce ed applica il rendering della "fila" di giocatori attivi, escluso quello relativo
+// alla macchina corrente
     private void setPlayerRing(SpriteBatch batch,ShapeRenderer sr)
     {
+// Recupero l'arraylist relativo ai giocatori attualmente attivi
         ArrayList<Player> players = room.getPlayers();
         int id = 1,i=0,playerID;
         Player p;
         playerID = Manager.getInstance().getMyPlayer().getId();
-// Ciclo fino a trovare l'istanza del player nell'arraylist
+// Ciclo fino a trovare l'istanza del player corrente nell'arraylist - con l'approccio che segue disegno prima tutti i
+// successori del player nella lista, e poi i predecessori. In tal modo ottengo la lista contigua dei giocatori
+// secondo l'ordine di turno
         while(i<players.size()) {
             p = players.get(i++);
             if(p.getId()==playerID)
@@ -240,23 +276,34 @@ public class UnoUIMain implements Screen {
             drawPlayerRing(batch,sr,p,id++,players.size()); }
     }
 
+// Metodo che disegna gli elementi grafici relativi ad uno specifico giocatore, dato il suo indice di posizione i
+// nella "fila", ed il numero totale di giocatori
     private void drawPlayerRing(SpriteBatch batch,ShapeRenderer sr, Player p, int i, int nPlayers)
     {
         float xc,yc;
+// Elaboro il centro del box all'interno del quale saranno renderizzati tutti gli elementi grafici
+// relativi al giocatore
         xc = 75 + 874*i/(nPlayers);
         yc = 650;
+// Renderizzo una "carta coperta", come segnalino per il giocatore corrente
         cardSprite.setPosition(xc-cardSprite.getWidth()/2,yc-cardSprite.getHeight()/2);
         cardSprite.draw(batch);
+// Imposto il colore del font a seconda dell'ID del giocatore, e renderizzo le stringhe relative al
+// suo username ed al suo numero di carte
         setFontColorFromID(pt22font,p.getId());
         glyphLayout.setText(pt22font,p.getUsername());
         pt22font.draw(batch,glyphLayout,xc-glyphLayout.width/2,yc-80);
         glyphLayout.setText(pt22font,p.getnCards()+" Carte");
         pt22font.draw(batch,glyphLayout,xc-glyphLayout.width/2,yc-100);
+// Se il giocatore ha in mano più di una carta, disegno una seconda volta la "carta coperta", con un leggero offset,
+// a segnalare ciò
         if(p.getnCards()>1)
         {
             cardSprite.setPosition(xc-cardSprite.getWidth()/2 + 7,yc-cardSprite.getHeight()/2 + 7);
             cardSprite.draw(batch);
         }
+// Se il giocatore renderizzato è anche quello in possesso del turno, disegno un box di highlight semi-trasparente
+// centrato su di esso
         if(manager.getIdPlaying()==p.getId())
         {
             batch.end();
@@ -269,6 +316,7 @@ public class UnoUIMain implements Screen {
         }
     }
 
+// Metodo atto ad impostare il colore del font, a seconda dell'ID del giocatore
     private void setFontColorFromID(BitmapFont font,int id)
     {
         if(id==0)
@@ -291,9 +339,13 @@ public class UnoUIMain implements Screen {
             font.setColor(0.5f,0.5f,0.5f,1.0f);
     }
 
+// Metodo che disegna un box semi-trasparente, per evidenziare il giocatore che attualmente possiede il turno.
+// Considero in input l'indice del giocatore nella "fila" renderizzata di players, ed il numero totale di questi
     private void drawTurnHighlight(ShapeRenderer sr,int id,int nPlayers)
     {
         float xc,yc;
+// Recupero le coordinate relative al centro del box da renderizzare, ed applico queste renderizzando poi un
+// rettangolo semi-trasparente.
         xc = 75 + 874*id/(nPlayers);
         yc = 650;
         sr.setColor(0.5f,0.5f,0.5f,0.6f);

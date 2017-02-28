@@ -1,5 +1,9 @@
 package UnoUI;
 
+/**
+ * Created by TheNexus on 20/02/17.
+ */
+
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -11,10 +15,7 @@ import java.util.ArrayList;
 import UnoGame.Card;
 import com.badlogic.gdx.Gdx;
 
-/**
- * Created by TheNexus on 20/02/17.
- */
-
+// Classe che si occupa di renderizzare la parte dell'interfaccia relativa alla mano di carte del giocatore
 public class CardBox {
 
     private Stage stage;
@@ -39,11 +40,15 @@ public class CardBox {
         stage.addActor(pane);
     }
 
+// Imposta dimensione e posizione del Box
     public void setSize(float w,float h) { stage.getViewport().setScreenSize((int)w,(int)h); }
     public void setXY(float x,float y) { pane.setX(x); pane.setY(y); }
 
+// Aggiorna il Box di carte: per ciascuna carta nella mano, realizza un oggetto Image con la texture corrispondente e
+// l'oggetto Card associato, per poi memorizzarlo nella Table all'interno del Box
     public void refreshPane(ArrayList<Card> hand)
     {
+// Elimino tutti gli oggetti presenti nel CardBox, prima di aggiornarlo
         table.clearChildren();
         Image img;
         for(int i=0;i<hand.size();i++)
@@ -55,9 +60,11 @@ public class CardBox {
             img.setUserObject(hand.get(i));
             table.add(img);
         }
+// Dopo aver aggiunto tutti gli oggetti sulla stessa riga, chiudo la stessa aggiungendone una nuova
         table.row();
     }
 
+// Data una coppia XY di coordinate schermo, restituisce l'oggetto Card (se presente) cliccato nel Box
     public Card selectedCard(int x,int y)
     {
         Actor a = stage.hit(x,y,true);
@@ -70,15 +77,18 @@ public class CardBox {
         return c;
     }
 
+// Restituisce l'oggetto Stage associato al Box
     public Stage getStage() {
         return stage;
     }
 
+// Renderizza ed anima il CardBox
     public void drawAndAct(float delta) {
         stage.act(delta);
         stage.draw();
     }
 
+// Libera la memoria associata al CardBox
     public void dispose() {
         stage.dispose();
         table.clear();
