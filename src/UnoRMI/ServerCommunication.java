@@ -102,7 +102,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         }
         else if (message.type == Message.PLAYER) {
             System.out.println("[PLAYER MSG] Player " + ((Player) message.getPayload()).getId() + " crashed!");
-            Manager.getInstance().setStatusString("Il giocatore "+((Player) message.getPayload()).getId()+" ha abbandonato la partita.");
+            Manager.getInstance().setStatusString(((Player) message.getPayload()).getUsername()+" ha abbandonato la partita.");
             CrashManager.getInstance().repairRing((Player) message.getPayload());
         }
         else if(message.type == Message.MOVE || message.type == Message.PASS || message.type == Message.SHUFFLEPASS || message.type == Message.SHUFFLEMOVE) {
@@ -144,7 +144,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
                 Manager.getInstance().setStatusString("Gioca il tuo turno!");
                 Manager.getInstance().getGameState().triggerTopCard();
             }
-            else {
+            else if(Manager.getInstance().getWinner()<0){
                 Player p2 = Manager.getInstance().getRoom().getPlayerFromId(message.getIdNextPlayer());
                 if(p2!=null) Manager.getInstance().setStatusString(p2.getUsername() + " gioca il suo turno...");
             }

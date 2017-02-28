@@ -20,13 +20,15 @@ public class CrashManager {
     /*ripara crash notificando gli altri host e riparando ring e GUI*/
     public InterfaceCommunication repairCrash(Player p) throws NotBoundException, ServerNotActiveException, RemoteException {
         System.out.println("[CRASH MANAGER] Host " + p.getHost().getIp() + " crashed!");
-        Manager.getInstance().setStatusString("Rilevato crash del giocatore "+p.getId()+"!");
+        Manager.getInstance().setStatusString("Rilevato crash di "+p.getUsername()+"!");
         Manager.getInstance().getRoom().removePlayer(p);
         String uuid = Manager.getInstance().getMyHost().getUuid();
         Message m = new Message(uuid, p);
         Manager.getInstance().getCommunication().getNextHostInterface().send(m);
-        if(Manager.getInstance().getRoom().getCurrentPlayers()==1)
+        if(Manager.getInstance().getRoom().getCurrentPlayers()==1) {
+            Manager.getInstance().setStatusString("Sei l'unico giocatore sopravvissuto, hai vinto!");
             Manager.getInstance().setWinner(Manager.getInstance().getMyPlayer().getId());
+        }
 
         Message toSendMsg = null;
         if(Manager.getInstance().getIdPlaying() == p.getId()) {
