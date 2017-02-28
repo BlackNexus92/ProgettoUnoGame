@@ -30,23 +30,22 @@ public class CrashManager {
             Manager.getInstance().setWinner(Manager.getInstance().getMyPlayer().getId());
         }
 
-        Message toSendMsg = null;
         if(Manager.getInstance().getIdPlaying() == p.getId()) {
-            toSendMsg = new Message(Manager.getInstance().getMyHost().getUuid(),null);
+            Message m2 = new Message(Manager.getInstance().getMyHost().getUuid(),null);
             if (Manager.getInstance().getGameState().getDeck().getReverse()) {
-                toSendMsg.setIdNextPlayer(Manager.getInstance().getRoom().getPrevious(p).getId());
+                m2.setIdNextPlayer(Manager.getInstance().getRoom().getPrevious(p).getId());
             } else {
-                toSendMsg.setIdNextPlayer(Manager.getInstance().getRoom().getNext(p).getId());
+                m2.setIdNextPlayer(Manager.getInstance().getRoom().getNext(p).getId());
             }
-            toSendMsg.type = Message.PASS;
-            toSendMsg.setPayload(Manager.getInstance().getGameState().getDeck());
-            toSendMsg.setSeqNumber(Manager.getInstance().getGameState().getSeqNumber());
-            toSendMsg.setPlayerCards(Manager.getInstance().getGameState().getHand().size());
-            toSendMsg.setIdPlayer(Manager.getInstance().getMyPlayer().getId());
-            Manager.getInstance().setIdPlaying((Integer) toSendMsg.getIdNextPlayer());
+            m2.type = Message.PASS;
+            m2.setPayload(Manager.getInstance().getGameState().getDeck());
+            m2.setSeqNumber(Manager.getInstance().getGameState().getSeqNumber());
+            m2.setPlayerCards(Manager.getInstance().getGameState().getHand().size());
+            m2.setIdPlayer(Manager.getInstance().getMyPlayer().getId());
+            Manager.getInstance().setIdPlaying((Integer) m2.getIdNextPlayer());
 
             try {
-                Manager.getInstance().getCommunication().getNextHostInterface().send(toSendMsg);
+                Manager.getInstance().getCommunication().getNextHostInterface().send(m2);
                 //this.getNextHostInterface().send(toSendMsg);
             } catch (RemoteException e) {
                 System.out.println("# REMOTE EXCEPTION # in ServerCommunication.send ");

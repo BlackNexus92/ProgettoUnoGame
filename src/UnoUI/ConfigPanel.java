@@ -28,83 +28,87 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.lang.Math;
 
+// Classe atta alla visualizzazione del pannello di configurazione iniziale del gioco
 public class ConfigPanel implements ChangeListener, ActionListener {
 
-    /** GRANDEZZE FINESTRA DI IMPOSTAZIONI **/
+// Width ed height della finestra
     private final int w = 500;
     private final int h = 155;
+// Array di valori per i numeri possibili di giocatori
     Integer[] playerNums = { 1, 2, 3, 4, 5, 6, 7, 8};
-    /** ELEMENTI GRAFICI **/
+
+// Elementi grafici Java Swing per la visualizzazione del pannello
     private JFrame jFrame;
     private JPanel panel;
     private JLabel usernameLabel;
     private JTextField usernameField;
-    private JLabel serverIpLabel;
+    private JLabel hostIpLabel;
     private JTextField ipField;
-    private JCheckBox serverCheckBox;
+    private JCheckBox hostCheckBox;
     private JLabel nplayersLabel;
     private JButton connectButton;
     private JComboBox nPlayersSelect;
-    /** VARIABILI GLOBALI UTILI PER COMINCIARE LA PARTITA **/
+
+// Variabili estratte dai campi dell'interfaccia, per la configurazione effettiva
     private String serverIP;
     private String username;
     private int nPlayers;
 
+
     public ConfigPanel() throws ParseException {
-        // Instanziazione degli elementi grafici della finestra
+// Allocazione degli elementi grafici
         jFrame = new JFrame("DistributedUno: Configurazione");
         SpringLayout layout = new SpringLayout();
         panel = new JPanel(layout);
         usernameLabel = new JLabel("Nickname:");
         usernameField = new JTextField("Player"+((int)Math.floor(100*Math.random())),10);
-        serverIpLabel = new JLabel("IP Host:      ");
+        hostIpLabel = new JLabel("IP Host:      ");
         ipField = new JTextField("0.0.0.0", 10);
         ipField.setPreferredSize(new Dimension(500,20));
-        serverCheckBox = new JCheckBox("Host della Partita");
+        hostCheckBox = new JCheckBox("Host della Partita");
         nplayersLabel = new JLabel(" - Players:");
         nPlayersSelect = new JComboBox(playerNums);
-
         connectButton = new JButton("Connessione");
         connectButton.setVerticalTextPosition(AbstractButton.CENTER);
         connectButton.setHorizontalTextPosition(AbstractButton.LEADING);
 
-        // impostazione degli elementi grafici
+// Imposto le caratteristiche del JFrame e la relativa visibilità
         jFrame.setSize(w,h);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panel.setBackground(Color.WHITE);
         nplayersLabel.setVisible(false);
         nPlayersSelect.setVisible(false);
 
-        // aggiunta dei listener alla checkbox ed al button di connessione
-        serverCheckBox.addChangeListener(this);
+// Aggiunta di listener per l'interfaccia di configurazione
+        hostCheckBox.addChangeListener(this);
         connectButton.addActionListener(this);
 
-        // posizionamento degli elementi grafici
+// Aggiunta di constraint per il posizionamento degli elementi a schermo
         layout.putConstraint(SpringLayout.WEST, usernameLabel, 10, SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, usernameLabel, 22, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.WEST, usernameField, 10, SpringLayout.EAST, serverIpLabel);
+        layout.putConstraint(SpringLayout.WEST, usernameField, 10, SpringLayout.EAST, hostIpLabel);
         layout.putConstraint(SpringLayout.NORTH, usernameField, 20, SpringLayout.NORTH, panel);
-        layout.putConstraint(SpringLayout.WEST, serverIpLabel, 10, SpringLayout.WEST, panel);
-        layout.putConstraint(SpringLayout.NORTH, serverIpLabel, 32, SpringLayout.NORTH, usernameLabel);
-        layout.putConstraint(SpringLayout.WEST, ipField, 10, SpringLayout.EAST, serverIpLabel);
+        layout.putConstraint(SpringLayout.WEST, hostIpLabel, 10, SpringLayout.WEST, panel);
+        layout.putConstraint(SpringLayout.NORTH, hostIpLabel, 32, SpringLayout.NORTH, usernameLabel);
+        layout.putConstraint(SpringLayout.WEST, ipField, 10, SpringLayout.EAST, hostIpLabel);
         layout.putConstraint(SpringLayout.NORTH, ipField, 30, SpringLayout.NORTH, usernameField);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, ipField, 0, SpringLayout.HORIZONTAL_CENTER, panel);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, usernameField, 0, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, serverCheckBox, 10, SpringLayout.SOUTH, ipField);
-        layout.putConstraint(SpringLayout.WEST, serverCheckBox, 0, SpringLayout.WEST, panel);
+        layout.putConstraint(SpringLayout.NORTH, hostCheckBox, 10, SpringLayout.SOUTH, ipField);
+        layout.putConstraint(SpringLayout.WEST, hostCheckBox, 0, SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, nplayersLabel, 14, SpringLayout.SOUTH, ipField);
         layout.putConstraint(SpringLayout.NORTH, nPlayersSelect, 11, SpringLayout.SOUTH, ipField);
-        layout.putConstraint(SpringLayout.WEST, nplayersLabel, -1, SpringLayout.EAST, serverCheckBox);
+        layout.putConstraint(SpringLayout.WEST, nplayersLabel, -1, SpringLayout.EAST, hostCheckBox);
         layout.putConstraint(SpringLayout.WEST, nPlayersSelect, 5, SpringLayout.EAST, nplayersLabel);
         layout.putConstraint(SpringLayout.SOUTH, connectButton, -25, SpringLayout.SOUTH, panel);
         layout.putConstraint(SpringLayout.EAST, connectButton, -10, SpringLayout.EAST, panel);
 
-        // aggiunta degli elementi grafici al panel ed al frame principale
+// Aggiungo gli elementi componenti dell'interfaccia al panel incluso nel JFrame
         panel.add(usernameLabel);
         panel.add(usernameField);
-        panel.add(serverIpLabel);
+        panel.add(hostIpLabel);
         panel.add(ipField);
-        panel.add(serverCheckBox);
+        panel.add(hostCheckBox);
         panel.add(nplayersLabel);
         panel.add(nPlayersSelect);
         panel.add(connectButton);
@@ -115,11 +119,11 @@ public class ConfigPanel implements ChangeListener, ActionListener {
     }
 
 
-// listener della checkbox server
+// Metodo di callback per il listener delle modifiche al checkbox Host
     @Override
     public void stateChanged(ChangeEvent e) {
 
-        if (serverCheckBox.isSelected()) {
+        if (hostCheckBox.isSelected()) {
             nplayersLabel.setVisible(true);
             nPlayersSelect.setVisible(true);
             ipField.setEnabled(false);
@@ -130,16 +134,17 @@ public class ConfigPanel implements ChangeListener, ActionListener {
         }
     }
 
-    // listener del button di connessione
+// Metodo di callback per il listener delle azioni effettuate sul tasto di connessione
     @Override
     public void actionPerformed(ActionEvent e) {
 
+// Se non vi sono errori di formattazione, proseguo impostando i parametri di gioco ed avviando la procedura di
+// connessione, tramite il metodo connect
         if (errorCheck()) {
             connectButton.setEnabled(false);
-
             try {
                 setUsername(usernameField.getText());
-                if (serverCheckBox.isSelected()) {
+                if (hostCheckBox.isSelected()) {
                     setServerIP("SERVER");
                     nPlayers = Integer.parseInt(nPlayersSelect.getSelectedItem().toString());
                     setNPlayers(nPlayers);
@@ -166,26 +171,31 @@ public class ConfigPanel implements ChangeListener, ActionListener {
         }
     }
 
+// Metodo atto al controllo di errori di formattazione nei parametri inseriti dall'utente
     private boolean errorCheck() {
         boolean errorFree = true;
         String error = "";
         String username = usernameField.getText();
         String ip = ipField.getText();
 
+// Errore nel caso di username vuoto
         if (username.isEmpty()) {
             error += "Inserire un username!\n";
             errorFree = false;
         }
+// Errore nel caso di IP Host vuoto
         if (ip.isEmpty()) {
             error += "Inserire l'IP dell'Host!\n";
             errorFree = false;
         }
+// Controllo errore nel caso di IP mal formattato
         else {
             String[] st = ip.split("\\.");
             boolean ipIncorrect = false;
             if (st.length < 4) {
                 ipIncorrect = true;
             }
+// Controllo errore nel caso di IP con valori non validi
             else {
                 for (int i = 0; i < st.length; i++) {
                     try {
@@ -211,7 +221,8 @@ public class ConfigPanel implements ChangeListener, ActionListener {
         return errorFree;
     }
 
-    // GETTERS e SETTERS
+// Metodi set e get generici
+
     public void setUsername(String username) {
         this.username = username;
     }
