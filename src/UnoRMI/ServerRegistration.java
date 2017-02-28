@@ -2,6 +2,8 @@ package UnoRMI;
 
 import UnoGame.GameState;
 
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
@@ -20,6 +22,8 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
     /*serve per creare id dei player*/
     private int idPlayer = 0;
 
+    private String serverIPString;
+
     public ServerRegistration(int n, Player p) throws RemoteException, InterruptedException, ServerNotActiveException {
         this.room = new Room(n);
         this.gameState = new GameState();
@@ -29,12 +33,18 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
         this.addPlayer(p);
     }
 
-    //todo
     public GameState addPlayer(Player p) throws RemoteException, InterruptedException, ServerNotActiveException {
         System.out.println("[REGISTRATION] Added Host IP: "+p.getHost().getIp()+" and PORT:"+p.getHost().getPort());
         p.setId(idPlayer++);
         this.room.addPlayer(p);
-        //		Controller.getInstance().getStartPanel().informServerHostRegistred(this.room);
+        try {
+            this.serverIPString = "IP Macchina: " + NetworkUtility.getInstance().getHostAddress();
+        } catch (UnknownHostException e1) {
+            e1.printStackTrace();
+        } catch (SocketException e1) {
+            e1.printStackTrace();
+        }
+        Manager.getInstance().setStatusString("Giocatori registrati: "+this.room.getCurrentPlayers()+"/"+this.room.getNumStartingPlayers()+" - "+this.serverIPString);
         return Manager.getInstance().getGameState();
 
     }

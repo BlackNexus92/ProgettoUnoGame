@@ -82,6 +82,7 @@ public class DesktopLauncher {
             Manager.getInstance().setMyPlayer(myPlayer);
             startDeamon();
             startDeamonRegistration(nPlayers, myPlayer);
+            sp.getJFrame().setVisible(false);
         }
 // Altrimenti, tento una connessione con il server tramite il metodo addPlayer
         else if (IP.startsWith("1")) {
@@ -97,6 +98,7 @@ public class DesktopLauncher {
             Manager.getInstance().setMyPlayer(myPlayer);
             Manager.getInstance().setGameState(registrationServer.addPlayer(myPlayer));
             registrationServer.receivedGamestate();
+            sp.getJFrame().setVisible(false);
             System.out.println("[HOST REGISTRED]");
         }
     }
