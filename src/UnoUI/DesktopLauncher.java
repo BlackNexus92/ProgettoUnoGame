@@ -74,7 +74,6 @@ public class DesktopLauncher {
         String IP = sp.getServerIP();
 // Se sono il server di registrazione, avvio il relativo servizio ed aggiungo me stesso alla nuova Room
         if (IP.equals("SERVER")) {
-            bootGUI();
             int nPlayers = sp.getNPlayers();
             String username = sp.getUsername();
             Host myHost = new Host(NetworkUtility.getInstance().getHostAddress(), PORT);
@@ -83,10 +82,10 @@ public class DesktopLauncher {
             startDeamon();
             startDeamonRegistration(nPlayers, myPlayer);
             sp.getJFrame().setVisible(false);
+            bootGUI();
         }
 // Altrimenti, tento una connessione con il server tramite il metodo addPlayer
         else if (IP.startsWith("1")) {
-            bootGUI();
             startDeamon();
             InterfaceRegistration registrationServer = null;
             Registry register = LocateRegistry.getRegistry(IP, PORT);
@@ -100,6 +99,7 @@ public class DesktopLauncher {
             registrationServer.receivedGamestate();
             sp.getJFrame().setVisible(false);
             System.out.println("[HOST REGISTRED]");
+            bootGUI();
         }
     }
 

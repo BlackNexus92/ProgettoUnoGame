@@ -56,12 +56,13 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
         else if(m.type == Message.ROOM) {//uuid != my_uuid AND type==Room
             System.out.println("[CONFIGURATION MSG RETURNED] Ring configured, sending Game State!");
             Manager.getInstance().setStatusString("Gioca il tuo turno!");
+            Manager.getInstance().setIdPlaying(Manager.getInstance().getMyPlayer().getId());
             Manager.getInstance().getGameState().initializeHand(Manager.getInstance().getMyPlayer().getId(), Manager.getInstance().getRoom().getNumStartingPlayers());
             Manager.getInstance().getGameState().triggerTopCard();
-            CheckTimer t = new CheckTimer();
-            Timer timer = new Timer();
-            Manager.getInstance().setTimer(timer);
-            Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 10);
+            //CheckTimer t = new CheckTimer();
+            //Timer timer = new Timer();
+            //Manager.getInstance().setTimer(timer);
+            //Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 10);
 
         }
         else if(m.type == Message.PLAYER) {
@@ -93,12 +94,13 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             System.out.println("[CONFIGURATION MSG] Ring configured!");
             this.configureRing((Room) message.getPayload());
             Manager.getInstance().getGameState().initializeHand(Manager.getInstance().getMyPlayer().getId(), Manager.getInstance().getRoom().getNumStartingPlayers());
-            Player p = Manager.getInstance().getRoom().getPlayerFromId(0);
+            Manager.getInstance().setIdPlaying(message.getIdPlayer());
+            Player p = Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer());
             if(p!=null) Manager.getInstance().setStatusString(p.getUsername() + " gioca il suo turno...");
-            CheckTimer t = new CheckTimer();
-            Timer timer = new Timer();
-            Manager.getInstance().setTimer(timer);
-            Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 10);
+            //CheckTimer t = new CheckTimer();
+            //Timer timer = new Timer();
+            //Manager.getInstance().setTimer(timer);
+            //Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 10);
         }
         else if (message.type == Message.PLAYER) {
             System.out.println("[PLAYER MSG] Player " + ((Player) message.getPayload()).getId() + " crashed!");

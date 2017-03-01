@@ -55,7 +55,6 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
             System.out.println("[REGISTRATION]: Room is full, send configuration message");
             String uuid = Manager.getInstance().getMyHost().getUuid();
             Manager.getInstance().setRoom(this.room);
-            //todo
             Message m = new Message(uuid,this.room);
             m.setIdPlayer(Manager.getInstance().getMyPlayer().getId());
             m.type = Message.ROOM;
