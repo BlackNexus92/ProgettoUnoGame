@@ -20,6 +20,10 @@ public class CrashManager {
     /*ripara crash notificando gli altri host e riparando ring e GUI*/
     public synchronized InterfaceCommunication repairCrash(Player p) throws NotBoundException, ServerNotActiveException, RemoteException {
         System.out.println("[CRASH MANAGER] Host " + p.getHost().getIp() + " crashed!");
+
+        Manager.getInstance().setStatusString("Rilevato crash di "+p.getUsername()+"!");
+        Manager.getInstance().getRoom().removePlayer(p);
+
         Message m = new Message(Manager.getInstance().getMyHost().getUuid(), p);
         m.type = Message.PLAYER;
         Manager.getInstance().getCommunication().getNextHostInterface().send(m);
@@ -29,12 +33,14 @@ public class CrashManager {
         }
         else if(Manager.getInstance().getIdPlaying() == p.getId()) {
             Message m2 = new Message(Manager.getInstance().getMyHost().getUuid(),null);
-            if (Manager.getInstance().getGameState().getDeck().getReverse()) {
-                m2.setIdNextPlayer(Manager.getInstance().getRoom().getPrevious(p).getId());
-            } else {
-                m2.setIdNextPlayer(Manager.getInstance().getRoom().getNext(p).getId());
-            }
             m2.type = Message.PASS;
+// Ricavo l'ID del giocatore che deve ereditare il turno a partire dal MIO player: posso farlo in quanto,
+// se il giocatore che mi segue crasha, il suo next diventa il mio next
+            if (Manager.getInstance().getGameState().getDeck().getReverse()) {
+                m2.setIdNextPlayer(Manager.getInstance().getRoom().getPrevious(Manager.getInstance().getMyPlayer()).getId());
+            } else {
+                m2.setIdNextPlayer(Manager.getInstance().getRoom().getNext(Manager.getInstance().getMyPlayer()).getId());
+            }
             m2.setPayload(Manager.getInstance().getGameState().getDeck());
             m2.setSeqNumber(Manager.getInstance().getGameState().getSeqNumber());
             m2.setPlayerCards(Manager.getInstance().getGameState().getHand().size());
@@ -42,9 +48,6 @@ public class CrashManager {
             Manager.getInstance().setIdPlaying(m2.getIdNextPlayer());
             Manager.getInstance().getCommunication().getNextHostInterface().send(m2);
         }
-
-        Manager.getInstance().setStatusString("Rilevato crash di "+p.getUsername()+"!");
-        Manager.getInstance().getRoom().removePlayer(p);
 
         return Manager.getInstance().getCommunication().getNextHostInterface();
     }
