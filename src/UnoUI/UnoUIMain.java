@@ -144,7 +144,7 @@ public class UnoUIMain implements Screen {
     @Override
     public void render(float delta) {
 // Recupero gli stati aggiornati del GameState e della room di gioco
-        gamestate = manager.getGameState();
+        gamestate = Manager.getInstance().getGameState();
         room = Manager.getInstance().getRoom();
 // Se ci sono state variazioni relative agli oggetti grafici della mano o della carta in cima al mazzo, aggiorno
 // e recupero questi
@@ -265,12 +265,12 @@ public class UnoUIMain implements Screen {
                 break; }
 // Disegno i players successivi al giocatore
         while(i<players.size()) {
-            p = players.get(i);
+            p = players.get(i++);
             drawPlayerRing(batch,sr,p,id++,players.size()); }
 // Disegno i restanti players successivi al giocatore, riavvolgendo l'iteratore
         i = 0;
         while(i<players.size()) {
-            p = players.get(i);
+            p = players.get(i++);
             if(p.getId()==playerID)
                 break;
             drawPlayerRing(batch,sr,p,id++,players.size()); }

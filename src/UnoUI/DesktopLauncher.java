@@ -43,7 +43,7 @@ public class DesktopLauncher {
         m.setGameState(new GameState());
         m.setMyPlayer(new Player());
         m.setRoom(new Room(1));
-        m.setIdPlaying(0);
+        m.setIdPlaying(-1);
         m.setWinner(-1);
         m.setStatusString("Gioco in fase di inizializzazione...");
 // Abilito il pannello di configurazione del gioco

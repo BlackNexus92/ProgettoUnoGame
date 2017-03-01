@@ -3,6 +3,7 @@ package UnoRMI;
 import UnoGame.Card;
 import UnoGame.Deck;
 import UnoGame.GameState;
+import UnoUI.TextureLoader;
 import com.badlogic.gdx.Game;
 
 import java.rmi.NotBoundException;
@@ -59,10 +60,12 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             Manager.getInstance().setIdPlaying(Manager.getInstance().getMyPlayer().getId());
             Manager.getInstance().getGameState().initializeHand(Manager.getInstance().getMyPlayer().getId(), Manager.getInstance().getRoom().getNumStartingPlayers());
             Manager.getInstance().getGameState().triggerTopCard();
-            //CheckTimer t = new CheckTimer();
-            //Timer timer = new Timer();
-            //Manager.getInstance().setTimer(timer);
-            //Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 10);
+            TextureLoader.setChanged();
+
+            CheckTimer t = new CheckTimer();
+            Timer timer = new Timer();
+            Manager.getInstance().setTimer(timer);
+            Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 40);
 
         }
         else if(m.type == Message.PLAYER) {
@@ -76,9 +79,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
 
         if(toSend) {
             try {
-                //todo testare se usare this or Manager.getInstance()
                 Manager.getInstance().getCommunication().getNextHostInterface().send(toSendMsg);
-                //this.getNextHostInterface().send(toSendMsg);
             } catch (RemoteException e) {
                 System.out.println("# REMOTE EXCEPTION # in ServerCommunication.send ");
             } catch (NotBoundException e) {
@@ -97,10 +98,12 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             Manager.getInstance().setIdPlaying(message.getIdPlayer());
             Player p = Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer());
             if(p!=null) Manager.getInstance().setStatusString(p.getUsername() + " gioca il suo turno...");
-            //CheckTimer t = new CheckTimer();
-            //Timer timer = new Timer();
-            //Manager.getInstance().setTimer(timer);
-            //Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 10);
+            TextureLoader.setChanged();
+
+            CheckTimer t = new CheckTimer();
+            Timer timer = new Timer();
+            Manager.getInstance().setTimer(timer);
+            Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 40);
         }
         else if (message.type == Message.PLAYER) {
             System.out.println("[PLAYER MSG] Player " + ((Player) message.getPayload()).getId() + " crashed!");
@@ -113,7 +116,7 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
 
 
         try{
-            this.getNextHostInterface().send(message);
+            Manager.getInstance().getCommunication().getNextHostInterface().send(message);
         } catch (NotBoundException e) {
             System.out.println("# NOT BOUND EXCEPTION # in ServerCommunication.processMessage ");
         } catch (RemoteException e) {

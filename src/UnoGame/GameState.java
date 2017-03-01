@@ -190,6 +190,9 @@ public class GameState implements Serializable {
                 m.setIdNextPlayer(Manager.getInstance().getRoom().getNext(Manager.getInstance().getMyPlayer()).getId());
             Manager.getInstance().setIdPlaying(m.getIdNextPlayer());
 
+            Player p = Manager.getInstance().getRoom().getPlayerFromId(m.getIdNextPlayer());
+            if(p!=null) Manager.getInstance().setStatusString(p.getUsername() + " gioca il suo turno...");
+
             if(shuffled)
                 m.type = Message.SHUFFLEPASS;
             else

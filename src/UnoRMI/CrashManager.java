@@ -18,19 +18,18 @@ public class CrashManager {
     }
 
     /*ripara crash notificando gli altri host e riparando ring e GUI*/
-    public InterfaceCommunication repairCrash(Player p) throws NotBoundException, ServerNotActiveException, RemoteException {
+    public synchronized InterfaceCommunication repairCrash(Player p) throws NotBoundException, ServerNotActiveException, RemoteException {
         System.out.println("[CRASH MANAGER] Host " + p.getHost().getIp() + " crashed!");
         Manager.getInstance().setStatusString("Rilevato crash di "+p.getUsername()+"!");
         Manager.getInstance().getRoom().removePlayer(p);
-        String uuid = Manager.getInstance().getMyHost().getUuid();
-        Message m = new Message(uuid, p);
+        Message m = new Message(Manager.getInstance().getMyHost().getUuid(), p);
+        m.type = Message.PLAYER;
         Manager.getInstance().getCommunication().getNextHostInterface().send(m);
-        if(Manager.getInstance().getRoom().getCurrentPlayers()==1) {
+        if(Manager.getInstance().getRoom().getCurrentPlayers()==1 && Manager.getInstance().getWinner()<0) {
             Manager.getInstance().setStatusString("Sei l'unico giocatore sopravvissuto, hai vinto!");
             Manager.getInstance().setWinner(Manager.getInstance().getMyPlayer().getId());
         }
-
-        if(Manager.getInstance().getIdPlaying() == p.getId()) {
+        else if(Manager.getInstance().getIdPlaying() == p.getId()) {
             Message m2 = new Message(Manager.getInstance().getMyHost().getUuid(),null);
             if (Manager.getInstance().getGameState().getDeck().getReverse()) {
                 m2.setIdNextPlayer(Manager.getInstance().getRoom().getPrevious(p).getId());
@@ -43,15 +42,7 @@ public class CrashManager {
             m2.setPlayerCards(Manager.getInstance().getGameState().getHand().size());
             m2.setIdPlayer(Manager.getInstance().getMyPlayer().getId());
             Manager.getInstance().setIdPlaying((Integer) m2.getIdNextPlayer());
-
-            try {
-                Manager.getInstance().getCommunication().getNextHostInterface().send(m2);
-                //this.getNextHostInterface().send(toSendMsg);
-            } catch (RemoteException e) {
-                System.out.println("# REMOTE EXCEPTION # in ServerCommunication.send ");
-            } catch (NotBoundException e) {
-                System.out.println("# NOT BOUND EXCEPTION # in ServerCommunication.send ");
-            }
+            Manager.getInstance().getCommunication().getNextHostInterface().send(m2);
         }
         return Manager.getInstance().getCommunication().getNextHostInterface();
     }

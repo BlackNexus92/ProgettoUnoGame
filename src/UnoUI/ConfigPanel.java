@@ -33,7 +33,7 @@ public class ConfigPanel implements ChangeListener, ActionListener {
 
 // Width ed height della finestra
     private final int w = 500;
-    private final int h = 155;
+    private final int h = 170;
 // Array di valori per i numeri possibili di giocatori
     Integer[] playerNums = { 1, 2, 3, 4, 5, 6, 7, 8};
 
@@ -100,7 +100,9 @@ public class ConfigPanel implements ChangeListener, ActionListener {
         layout.putConstraint(SpringLayout.NORTH, nPlayersSelect, 11, SpringLayout.SOUTH, ipField);
         layout.putConstraint(SpringLayout.WEST, nplayersLabel, -1, SpringLayout.EAST, hostCheckBox);
         layout.putConstraint(SpringLayout.WEST, nPlayersSelect, 5, SpringLayout.EAST, nplayersLabel);
-        layout.putConstraint(SpringLayout.SOUTH, connectButton, -25, SpringLayout.SOUTH, panel);
+
+
+        layout.putConstraint(SpringLayout.NORTH, connectButton, 10, SpringLayout.SOUTH, ipField);
         layout.putConstraint(SpringLayout.EAST, connectButton, -10, SpringLayout.EAST, panel);
 
 // Aggiungo gli elementi componenti dell'interfaccia al panel incluso nel JFrame
