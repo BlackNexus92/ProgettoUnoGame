@@ -20,8 +20,6 @@ public class CrashManager {
     /*ripara crash notificando gli altri host e riparando ring e GUI*/
     public synchronized InterfaceCommunication repairCrash(Player p) throws NotBoundException, ServerNotActiveException, RemoteException {
         System.out.println("[CRASH MANAGER] Host " + p.getHost().getIp() + " crashed!");
-        Manager.getInstance().setStatusString("Rilevato crash di "+p.getUsername()+"!");
-        Manager.getInstance().getRoom().removePlayer(p);
         Message m = new Message(Manager.getInstance().getMyHost().getUuid(), p);
         m.type = Message.PLAYER;
         Manager.getInstance().getCommunication().getNextHostInterface().send(m);
@@ -41,9 +39,13 @@ public class CrashManager {
             m2.setSeqNumber(Manager.getInstance().getGameState().getSeqNumber());
             m2.setPlayerCards(Manager.getInstance().getGameState().getHand().size());
             m2.setIdPlayer(Manager.getInstance().getMyPlayer().getId());
-            Manager.getInstance().setIdPlaying((Integer) m2.getIdNextPlayer());
+            Manager.getInstance().setIdPlaying(m2.getIdNextPlayer());
             Manager.getInstance().getCommunication().getNextHostInterface().send(m2);
         }
+
+        Manager.getInstance().setStatusString("Rilevato crash di "+p.getUsername()+"!");
+        Manager.getInstance().getRoom().removePlayer(p);
+
         return Manager.getInstance().getCommunication().getNextHostInterface();
     }
 

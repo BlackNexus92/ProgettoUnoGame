@@ -42,19 +42,21 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
     }
 
     public void send(Message m) throws RemoteException, ServerNotActiveException {
-        try{
+        try {
             System.out.println("[MSG RECEIVED] Msg from :" + Manager.getInstance().getIpFromUuid(m.getUuid()) +
                     "  -  type:"+ m.getPayload().getClass());
         } catch (Exception e) {
             System.out.println("[MSG RECEIVED ERROR] Msg from UUID:" + m.getUuid());
         }
 
-        boolean toSend = false;
-        Message toSendMsg = null;
-
         if(!m.getUuid().equals(Manager.getInstance().getMyHost().getUuid()))
             processMessage(m);
-        else if(m.type == Message.ROOM) {//uuid != my_uuid AND type==Room
+        else
+            processReturnedMessage(m);
+    }
+
+    private void processReturnedMessage(Message message) {
+        if(message.type == Message.ROOM) {
             System.out.println("[CONFIGURATION MSG RETURNED] Ring configured, sending Game State!");
             Manager.getInstance().setStatusString("Gioca il tuo turno!");
             Manager.getInstance().setIdPlaying(Manager.getInstance().getMyPlayer().getId());
@@ -66,28 +68,17 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             Timer timer = new Timer();
             Manager.getInstance().setTimer(timer);
             Manager.getInstance().getTimer().scheduleAtFixedRate(t, 1, 40);
-
         }
-        else if(m.type == Message.PLAYER) {
+        else if(message.type == Message.PLAYER) {
             System.out.println("[RETURNED PLAYER MSG] Crashed player removed from Ring!");
         }
-        else if(m.type == Message.MOVE || m.type == Message.PASS || m.type == Message.SHUFFLEPASS || m.type == Message.SHUFFLEMOVE) {
+        else if(message.type == Message.MOVE || message.type == Message.PASS || message.type == Message.SHUFFLEPASS || message.type == Message.SHUFFLEMOVE) {
             System.out.println("[RETURNED MOVE MSG] Move message returned!");
             if(Manager.getInstance().getRoom().getCurrentPlayers()==1)
-                updateGamestate(m);
+                updateGamestate(message);
         }
 
-        if(toSend) {
-            try {
-                Manager.getInstance().getCommunication().getNextHostInterface().send(toSendMsg);
-            } catch (RemoteException e) {
-                System.out.println("# REMOTE EXCEPTION # in ServerCommunication.send ");
-            } catch (NotBoundException e) {
-                System.out.println("# NOT BOUND EXCEPTION # in ServerCommunication.send ");
-            }
-        }
-        else
-            System.out.println("[RETURNED MSG] End Ring");
+        System.out.println("[RETURNED MSG] End Ring");
     }
 
     private void processMessage(Message message) {
@@ -134,8 +125,6 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             p.setnCards(message.getPlayerCards());
             Manager.getInstance().getGameState().setDeck((Deck) message.getPayload());
 
-            Card c = Manager.getInstance().getGameState().getDeck().getTopCard();
-
             if (message.getPlayerCards() == 0) {
                 Manager.getInstance().setWinner(message.getIdPlayer());
                 Player p2 = Manager.getInstance().getRoom().getPlayerFromId(message.getIdPlayer());
@@ -143,6 +132,8 @@ public class ServerCommunication extends UnicastRemoteObject implements Interfac
             }
 
             System.out.println("[TURN MSG] Turn of player " + message.getIdNextPlayer() + "!");
+
+            TextureLoader.setChanged();
 
             Manager.getInstance().setIdPlaying(message.getIdNextPlayer());
             if (Manager.getInstance().isPlaying()) {
