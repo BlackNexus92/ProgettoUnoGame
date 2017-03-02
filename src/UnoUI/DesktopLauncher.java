@@ -23,8 +23,6 @@ import java.text.ParseException;
 
 import UnoRMI.Manager;
 
-import java.text.ParseException;
-
 
 public class DesktopLauncher {
 
@@ -37,12 +35,12 @@ public class DesktopLauncher {
     public static int resY = 768;
 
     public static void main (String[] arg) {
-// Credo una istanza del Gamestate, Player e Room fittizia: non appena il giocatore si unira' ad una partita, o
+// Creo una istanza del Gamestate, Player e Arena fittizia: non appena il giocatore si unira' ad una partita, o
 // diventera' Server, queste saranno nuovamente allocate con i dati reali di gioco
         Manager m = Manager.getInstance();
         m.setGameState(new GameState());
         m.setMyPlayer(new Player());
-        m.setRoom(new Room(1));
+        m.setArena(new Arena(1));
         m.setIdPlaying(-1);
         m.setWinner(-1);
         m.setStatusString("Gioco in fase di inizializzazione...");
@@ -72,11 +70,11 @@ public class DesktopLauncher {
 // con lo stesso, oppure avvia il server di registrazione se sono io stesso il server
     public static void connect(ConfigPanel sp) throws RemoteException, AlreadyBoundException, UnknownHostException, SocketException, NotBoundException, InterruptedException, ServerNotActiveException {
         String IP = sp.getServerIP();
-// Se sono il server di registrazione, avvio il relativo servizio ed aggiungo me stesso alla nuova Room
+// Se sono il server di registrazione, avvio il relativo servizio ed aggiungo me stesso alla nuova Arena
         if (IP.equals("SERVER")) {
             int nPlayers = sp.getNPlayers();
             String username = sp.getUsername();
-            Host myHost = new Host(NetworkUtility.getInstance().getHostAddress(), PORT);
+            Host myHost = new Host(AddressUtility.getInstance().getHostAddress(), PORT);
             Player myPlayer = new Player(username, myHost);
             Manager.getInstance().setMyPlayer(myPlayer);
             startDeamon();
@@ -91,24 +89,24 @@ public class DesktopLauncher {
             Registry register = LocateRegistry.getRegistry(IP, PORT);
             registrationServer = (InterfaceRegistration) register.lookup("RegistrationService");
             String username = sp.getUsername();
-            Host myHost = new Host(NetworkUtility.getInstance().getHostAddress(), PORT);
+            Host myHost = new Host(AddressUtility.getInstance().getHostAddress(), PORT);
             Player myPlayer = new Player(username, myHost);
-// Il giocatore alloca il proprio oggetto Player (ma non ne imposta ancora l'ID), ed aggiunge se stesso alla Room
+// Il giocatore alloca il proprio oggetto Player (ma non ne imposta ancora l'ID), ed aggiunge se stesso alla Arena
             Manager.getInstance().setMyPlayer(myPlayer);
             Manager.getInstance().setGameState(registrationServer.addPlayer(myPlayer));
-            registrationServer.receivedGamestate();
+            registrationServer.receivedGameState();
             sp.getJFrame().setVisible(false);
-            System.out.println("[HOST REGISTRED]");
+//            System.out.println("REGISTRATION: Host "+ myHost.getIp() +" registered");
             bootGUI();
         }
     }
 
 // Metodo che si occupa di inizializzare il servizio RMI in ascolto, relativo alla comunicazione di gioco
     public static void startDeamon() throws UnknownHostException, SocketException, RemoteException, AlreadyBoundException {
-        System.setProperty("java.rmi.server.hostname", NetworkUtility.getInstance().getHostAddress());
+        System.setProperty("java.rmi.server.hostname", AddressUtility.getInstance().getHostAddress());
         System.setProperty("java.rmi.disableHttp", "true");
         registry = LocateRegistry.createRegistry(PORT);
-        System.out.println("[SERVER] IN ASCOLTO...");
+//        System.out.println("REGISTRATION: Server is waiting...");
         ServerCommunication server = new ServerCommunication();
         Manager.getInstance().setCommunication(server);
         registry.bind("Communication", server);
@@ -116,10 +114,10 @@ public class DesktopLauncher {
 
 // Metodo atto ad inizializzare il servizio RMI di registrazione, relativo al server, e richiamato dagli altri giocatori
     public static void startDeamonRegistration(int nPlayers, Player myPlayer) throws AccessException, RemoteException, AlreadyBoundException, InterruptedException, ServerNotActiveException {
-        System.out.println("[REGISTRATION SERVICE] IN ASCOLTO...");
+        System.out.println("REGISTRATION: Server is waiting...");
         ServerRegistration serverRegistration = new ServerRegistration(nPlayers, myPlayer);
         registry.bind("RegistrationService", serverRegistration);
-        serverRegistration.receivedGamestate();
+        serverRegistration.receivedGameState();
     }
 
 }

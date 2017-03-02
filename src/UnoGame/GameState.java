@@ -84,7 +84,7 @@ public class GameState implements Serializable {
             if(topCard.type==Card.BLOCKTYPE) { canPlay = false; cardsToDraw = 0;}
             if(topCard.type==Card.PLUSTWOTYPE) { canPlay = false; cardsToDraw = 2; }
             if(topCard.type==Card.PLUSFOURTYPE) { canPlay = false; cardsToDraw = 4; }
-            if(topCard.type==Card.CHANGEDIRTYPE && Manager.getInstance().getRoom().getCurrentPlayers()==2) { canPlay = false; cardsToDraw = 0; }
+            if(topCard.type==Card.CHANGEDIRTYPE && Manager.getInstance().getArena().getCurrentPlayers()==2) { canPlay = false; cardsToDraw = 0; }
         }
 // Se invece posso giocare, in quanto l'effetto della topcard era già stato scatenato, elaboro se sia necessario
 // pescare una carta, nel caso in cui non ne abbia di valide nella mano
@@ -138,9 +138,9 @@ public class GameState implements Serializable {
 
 // Imposto l'id del giocatore che avrà il turno dopo di me, a seconda del verso del giro di gioco
             if(Manager.getInstance().getGameState().getDeck().getReverse())
-                m.setIdNextPlayer(Manager.getInstance().getRoom().getPrevious(Manager.getInstance().getMyPlayer()).getId());
+                m.setIdNextPlayer(Manager.getInstance().getArena().getPrevious(Manager.getInstance().getMyPlayer()).getId());
             else
-                m.setIdNextPlayer(Manager.getInstance().getRoom().getNext(Manager.getInstance().getMyPlayer()).getId());
+                m.setIdNextPlayer(Manager.getInstance().getArena().getNext(Manager.getInstance().getMyPlayer()).getId());
             Manager.getInstance().setIdPlaying(m.getIdNextPlayer());
 
 // Se la mia mano ha dimensione zero, ho vinto: in tal caso, nessuno potrà giocare dopo di me
@@ -150,7 +150,7 @@ public class GameState implements Serializable {
                 m.setIdNextPlayer(-1);
             }
             else {
-                Player p = Manager.getInstance().getRoom().getPlayerFromId(m.getIdNextPlayer());
+                Player p = Manager.getInstance().getArena().getPlayerFromId(m.getIdNextPlayer());
                 if(p!=null) Manager.getInstance().setStatusString(p.getUsername() + " gioca il suo turno...");
             }
 
@@ -185,12 +185,12 @@ public class GameState implements Serializable {
             m.setPlayerCards(hand.size());
 
             if(Manager.getInstance().getGameState().getDeck().getReverse())
-                m.setIdNextPlayer(Manager.getInstance().getRoom().getPrevious(Manager.getInstance().getMyPlayer()).getId());
+                m.setIdNextPlayer(Manager.getInstance().getArena().getPrevious(Manager.getInstance().getMyPlayer()).getId());
             else
-                m.setIdNextPlayer(Manager.getInstance().getRoom().getNext(Manager.getInstance().getMyPlayer()).getId());
+                m.setIdNextPlayer(Manager.getInstance().getArena().getNext(Manager.getInstance().getMyPlayer()).getId());
             Manager.getInstance().setIdPlaying(m.getIdNextPlayer());
 
-            Player p = Manager.getInstance().getRoom().getPlayerFromId(m.getIdNextPlayer());
+            Player p = Manager.getInstance().getArena().getPlayerFromId(m.getIdNextPlayer());
             if(p!=null) Manager.getInstance().setStatusString(p.getUsername() + " gioca il suo turno...");
 
             if(shuffled)

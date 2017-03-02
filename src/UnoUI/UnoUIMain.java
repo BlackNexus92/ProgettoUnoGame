@@ -4,7 +4,6 @@ package UnoUI;
  * Created by TheNexus on 19/02/17.
  */
 
-import UnoGame.Deck;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -14,15 +13,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import UnoRMI.Manager;
-import UnoRMI.Room;
+import UnoRMI.Arena;
 import UnoRMI.Player;
 import UnoGame.GameState;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import UnoGame.Card;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 // Classe che implementa l'interfaccia di gioco vera e propria
 public class UnoUIMain implements Screen {
@@ -46,7 +43,7 @@ public class UnoUIMain implements Screen {
 // Oggetti relativi alla logica di gioco ed alla comunicazione
     private Manager manager;
     private GameState gamestate;
-    private Room room;
+    private Arena arena;
 
 // Oggetto CardBox per il rendering della mano del giocatore
     private CardBox cardBox;
@@ -93,7 +90,7 @@ public class UnoUIMain implements Screen {
 
 // Recupero le istanze relative agli oggetti di comunicazione e di gioco, già inizializzati
         manager = Manager.getInstance();
-        room = Manager.getInstance().getRoom();
+        arena = Manager.getInstance().getArena();
         gamestate = manager.getGameState();
         TextureLoader.setTopCardTexture(gamestate.getDeck().getTopCard());
         topCardSprite.setRegion(TextureLoader.getTopCardTexture());
@@ -143,9 +140,9 @@ public class UnoUIMain implements Screen {
 // Metodo di callback per il rendering, richiamato automaticamente dal contesto OpenGL
     @Override
     public void render(float delta) {
-// Recupero gli stati aggiornati del GameState e della room di gioco
+// Recupero gli stati aggiornati del GameState e della arena di gioco
         gamestate = Manager.getInstance().getGameState();
-        room = Manager.getInstance().getRoom();
+        arena = Manager.getInstance().getArena();
 // Se ci sono state variazioni relative agli oggetti grafici della mano o della carta in cima al mazzo, aggiorno
 // e recupero questi
         if(TextureLoader.hasChanged())
@@ -252,7 +249,7 @@ public class UnoUIMain implements Screen {
     private void setPlayerRing(SpriteBatch batch,ShapeRenderer sr)
     {
 // Recupero l'arraylist relativo ai giocatori attualmente attivi
-        ArrayList<Player> players = room.getPlayers();
+        ArrayList<Player> players = arena.getPlayers();
         int id = 1,i=0,playerID;
         Player p;
         playerID = Manager.getInstance().getMyPlayer().getId();

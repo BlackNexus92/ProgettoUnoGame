@@ -5,18 +5,21 @@ import java.util.Enumeration;
 import java.util.UUID;
 
 /**
+ * Classe per la gestione degli indirizzi IP
+ *
  * Created by angelo on 20/02/17.
  */
-public class NetworkUtility {
+public class AddressUtility {
 
-    private static NetworkUtility instance;
+    private static AddressUtility instance;
 
-    public static NetworkUtility getInstance() {
+    public static AddressUtility getInstance() {
         if(instance == null)
-            instance = new NetworkUtility();
+            instance = new AddressUtility();
         return instance;
     }
 
+    //Restituisce l'indirizzo IP dell'host
     public String getHostAddress() throws UnknownHostException, SocketException {
 
         for(Enumeration<NetworkInterface> ni = NetworkInterface.getNetworkInterfaces(); ni.hasMoreElements();) {
@@ -35,6 +38,7 @@ public class NetworkUtility {
         return null;
     }
 
+    //Restituisce un identificativo per l'host
     public String getRandomUUID() {
         return UUID.randomUUID().toString();
     }

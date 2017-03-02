@@ -5,27 +5,31 @@ import UnoGame.GameState;
 import java.util.Timer;
 
 /**
+ * Classe che gestisce interamente ogni aspetto del player che sta giocando
+ *
  * Created by angelo on 20/02/17.
  */
 public class Manager {
 
     /*Singleton della classe Manager*/
     private static Manager instance;
-    /*Room attiva*/
-    private Room room;
+    /*Arena attiva*/
+    private Arena arena;
     /*Server di comunicazione dell'host corrente*/
     private ServerCommunication communication;
     /*Player*/
     private Player player;
-    /**/
+    /*Stato di gioco*/
     private GameState gameState;
     /*Indica quale player sta giocando*/
     private int idPlaying;
+    /*Indica l'id del vincitore*/
     private int winner;
+    /*Timer per il richiamo di un task*/
     private Timer timer;
+    /*Indica l'azione del giocatore che ha il turno*/
     private String statusString;
 
-    //todo aggiungere variabili?
 
     public static Manager getInstance() {
         if(instance == null)
@@ -49,12 +53,12 @@ public class Manager {
         return this.player.getHost();
     }
 
-    public Room getRoom() {
-        return this.room;
+    public Arena getArena() {
+        return this.arena;
     }
 
-    public void setRoom(Room r) {
-        this.room = r;
+    public void setArena(Arena r) {
+        this.arena = r;
     }
 
     public ServerCommunication getCommunication() {
@@ -84,17 +88,17 @@ public class Manager {
     public synchronized Timer getTimer() {return this.timer; }
 
     public String getIpFromUuid(String u) {
-        for(int i=0; i<this.room.getPlayers().size(); i++) {
-            if(this.room.getPlayers().get(i).getHost().getUuid().equals(u))
-                return this.room.getPlayers().get(i).getHost().getIp();
+        for(int i = 0; i<this.arena.getPlayers().size(); i++) {
+            if(this.arena.getPlayers().get(i).getHost().getUuid().equals(u))
+                return this.arena.getPlayers().get(i).getHost().getIp();
         }
         return null;
     }
 
     public void setIdFromUuid() {
-        for(int i=0; i<this.room.getPlayers().size(); i++) {
-            if(this.room.getPlayers().get(i).getHost().getUuid().equals(this.player.getHost().getUuid()))
-                this.player.setId(this.room.getPlayers().get(i).getId());
+        for(int i = 0; i<this.arena.getPlayers().size(); i++) {
+            if(this.arena.getPlayers().get(i).getHost().getUuid().equals(this.player.getHost().getUuid()))
+                this.player.setId(this.arena.getPlayers().get(i).getId());
         }
     }
 }

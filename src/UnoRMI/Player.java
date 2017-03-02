@@ -4,6 +4,8 @@ import java.io.Serializable;
 import UnoGame.Deck;
 
 /**
+ * Classe che identifica il giocatore
+ *
  * Created by angelo on 20/02/17.
  */
 public class Player implements Serializable {
@@ -15,7 +17,7 @@ public class Player implements Serializable {
     private Host host;
     /*id univoco del player*/
     private int id;
-
+    /*numero di carte nella mano del player*/
     private int nCards;
 
     public Player() { }
@@ -31,6 +33,7 @@ public class Player implements Serializable {
     }
 
     public int getnCards() { return nCards; }
+
     public void setnCards(int n) { nCards = n; }
 
     public void setUsername(String username) {

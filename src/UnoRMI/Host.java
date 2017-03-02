@@ -3,6 +3,8 @@ package UnoRMI;
 import java.io.Serializable;
 
 /**
+ * Classe che gestisce un host collegato alla rete durante il gioco
+ *
  * Created by angelo on 20/02/17.
  */
 public class Host implements Serializable {
@@ -16,13 +18,13 @@ public class Host implements Serializable {
     private int port;
 
     public Host() {
-        this.uuid = NetworkUtility.getInstance().getRandomUUID();
+        this.uuid = AddressUtility.getInstance().getRandomUUID();
     }
 
     public Host(String ip, int port) {
         this.ip = ip;
         this.port = port;
-        this.uuid = NetworkUtility.getInstance().getRandomUUID();
+        this.uuid = AddressUtility.getInstance().getRandomUUID();
     }
 
     public String getUuid() {
