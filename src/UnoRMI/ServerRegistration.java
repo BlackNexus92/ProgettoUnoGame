@@ -66,7 +66,7 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
             try {
                 Manager.getInstance().getCommunication().getNextHostInterface().send(m);
             } catch (RemoteException e) {
-                System.out.println("*EXCEPTION*: RemoteException in receivedGameState ");
+                System.out.println("*EXCEPTION*: RemoteException in receivedGameState");
             } catch (NotBoundException e) {
                 System.out.println("*EXCEPTION*: NotBoundException in receivedGameState ");
             }
