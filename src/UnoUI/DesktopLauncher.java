@@ -74,7 +74,7 @@ public class DesktopLauncher {
         if (IP.equals("SERVER")) {
             int nPlayers = sp.getNPlayers();
             String username = sp.getUsername();
-            Host myHost = new Host(AddressUtility.getInstance().getHostAddress(), PORT);
+            Host myHost = new Host(AddressManager.getInstance().getHostAddress(), PORT);
             Player myPlayer = new Player(username, myHost);
             Manager.getInstance().setMyPlayer(myPlayer);
             startDeamon();
@@ -89,7 +89,7 @@ public class DesktopLauncher {
             Registry register = LocateRegistry.getRegistry(IP, PORT);
             registrationServer = (InterfaceRegistration) register.lookup("RegistrationService");
             String username = sp.getUsername();
-            Host myHost = new Host(AddressUtility.getInstance().getHostAddress(), PORT);
+            Host myHost = new Host(AddressManager.getInstance().getHostAddress(), PORT);
             Player myPlayer = new Player(username, myHost);
 // Il giocatore alloca il proprio oggetto Player (ma non ne imposta ancora l'ID), ed aggiunge se stesso alla Arena
             Manager.getInstance().setMyPlayer(myPlayer);
@@ -103,7 +103,7 @@ public class DesktopLauncher {
 
 // Metodo che si occupa di inizializzare il servizio RMI in ascolto, relativo alla comunicazione di gioco
     public static void startDeamon() throws UnknownHostException, SocketException, RemoteException, AlreadyBoundException {
-        System.setProperty("java.rmi.server.hostname", AddressUtility.getInstance().getHostAddress());
+        System.setProperty("java.rmi.server.hostname", AddressManager.getInstance().getHostAddress());
         System.setProperty("java.rmi.disableHttp", "true");
         registry = LocateRegistry.createRegistry(PORT);
 //        System.out.println("REGISTRATION: Server is waiting...");

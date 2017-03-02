@@ -42,7 +42,7 @@ public class ServerRegistration extends UnicastRemoteObject implements Interface
         p.setId(idPlayer++);
         this.arena.addPlayer(p);
         try {
-            this.serverIPString = "IP Macchina: " + AddressUtility.getInstance().getHostAddress();
+            this.serverIPString = "IP Macchina: " + AddressManager.getInstance().getHostAddress();
         } catch (UnknownHostException e1) {
             e1.printStackTrace();
         } catch (SocketException e1) {

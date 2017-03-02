@@ -18,13 +18,13 @@ public class Host implements Serializable {
     private int port;
 
     public Host() {
-        this.uuid = AddressUtility.getInstance().getRandomUUID();
+        this.uuid = AddressManager.getInstance().getRandomUUID();
     }
 
     public Host(String ip, int port) {
         this.ip = ip;
         this.port = port;
-        this.uuid = AddressUtility.getInstance().getRandomUUID();
+        this.uuid = AddressManager.getInstance().getRandomUUID();
     }
 
     public String getUuid() {

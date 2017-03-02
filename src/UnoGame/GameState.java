@@ -166,11 +166,11 @@ public class GameState implements Serializable {
             try {
                 Manager.getInstance().getCommunication().getNextHostInterface().send(m);
             } catch (RemoteException e) {
-                System.out.println("# REMOTE EXCEPTION # in ServerCommunication.send ");
+                System.out.println("*EXCEPTION*: RemoteException in applyCard!");
             } catch (NotBoundException e) {
-                System.out.println("# NOT BOUND EXCEPTION # in ServerCommunication.send ");
+                System.out.println("*EXCEPTION*: NotBoundException in applyCard!");
             } catch (ServerNotActiveException e) {
-                System.out.println("# SERVER NOT ACTIVE EXCEPTION # in ServerCommunication.send ");
+                System.out.println("*EXCEPTION*: ServerNotActiveException in applyCard!");
             }
 
 // Se invece non posso giocare una carta a causa di un effetto di blocco, o perché non possiedo nessuna carta valida,
@@ -205,11 +205,11 @@ public class GameState implements Serializable {
             try {
                 Manager.getInstance().getCommunication().getNextHostInterface().send(m);
             } catch (RemoteException e) {
-                System.out.println("# REMOTE EXCEPTION # in ServerCommunication.send ");
+                System.out.println("*EXCEPTION*: RemoteException in applyCard!");
             } catch (NotBoundException e) {
-                System.out.println("# NOT BOUND EXCEPTION # in ServerCommunication.send ");
+                System.out.println("*EXCEPTION*: NotBoundException in applyCard!");
             } catch (ServerNotActiveException e) {
-                System.out.println("# SERVER NOT ACTIVE EXCEPTION # in ServerCommunication.send ");
+                System.out.println("*EXCEPTION*: ServerNotActiveException in applyCard!");
             }
 
         }

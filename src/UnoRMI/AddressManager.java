@@ -9,13 +9,13 @@ import java.util.UUID;
  *
  * Created by angelo on 20/02/17.
  */
-public class AddressUtility {
+public class AddressManager {
 
-    private static AddressUtility instance;
+    private static AddressManager instance;
 
-    public static AddressUtility getInstance() {
+    public static AddressManager getInstance() {
         if(instance == null)
-            instance = new AddressUtility();
+            instance = new AddressManager();
         return instance;
     }
 
