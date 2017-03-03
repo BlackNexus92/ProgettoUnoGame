@@ -84,7 +84,7 @@ che consentono di attivare effetti particolari. Tra le carte speciali, abbiamo:
  \item la carta ``\emph{Cambio giro}'': inverte il senso di gioco, cioè l'ordine dei turni dei giocatori;
  \item la carta ``\emph{Pesca 2}'': il giocatore successivo nel senso del gioco pesca due carte e salta il turno;
  \item la carta ``\emph{Pesca 4}'': il giocatore successivo nel senso del gioco pesca quattro carte e salta il turno. Inoltre, consente al giocatore che l'ha
- giocata, di cambiare il colore del gioco. 
+ giocata, di cambiare il colore del gioco; 
  \item la carta ``\emph{Cambia colore}'': permette al giocatore di scegliere uno tra i quattro colori disponibili come colore di gioco.
 \end{itemize}
 In particolare, alle carte \emph{Blocco}, \emph{Cambio giro} e \emph{Pesca 2}, è associato un colore mentre le altre due carte speciali (\emph{Pesca 4} e 
@@ -102,28 +102,93 @@ Nel resto del documento, verrà data una panoramica del gioco nella Sezione 2; n
 il documento si conclude con possibili miglioramenti e considerazioni finali.
 
 \section{Panoramica del Gioco}
+In questa Sezione, vengono descritto il funzionamento del gioco e le varie problematiche affrontate.
+
+\subsection{Descrizione del Gioco}
 L'architettura dell'applicazione realizzata è di tipo distribuito. L'unica forma di centralizzazione utilizzata è quella che consente la registrazione dei 
 partecipanti al gioco. In questo scenario, uno dei giocatori sceglie di essere l'entità centrale semplicemente spuntando la casella presente nel pannello 
 di registrazione. Successivamente, una volta indicato il proprio username e il numero di partecipanti alla partita, viene inizializzato lo stato del gioco e
-avviata l'interfaccia di gioco. In tale schermata è, inoltre, presente l'indirizzo IP al quale gli altri peer devono connettersi per poter partecipare alla 
-partita appena avviata. Quindi, i restanti giocatori, dovranno inserire nell'apposito campo ``IP Host'', l'indirizzo IP dell'host. Ogni volta che un peer si
+avviata l'interfaccia di gioco. In tale schermata, è, inoltre, presente l'indirizzo IP al quale gli altri peer devono connettersi per poter partecipare alla 
+partita appena avviata. Quindi, i restanti giocatori dovranno inserire nell'apposito campo ``IP Host'', l'indirizzo IP dell'host. Ogni volta che un peer si
 connette alla partita, l'interfaccia di gioco viene aggiornata mostrando i giocatori attualmente connessi. Quando tutti i giocatori hanno effettuato la 
 registrazione alla partita, la fase di registrazione termina e nessun peer fungerà da entità centrale. Da quel momento in poi, le comunicazioni avverranno 
 solamente in maniera peer-to-peer.\\
-Finita la fase di registrazione, quindi, comincia la fase di gioco. Il giocatore che fungeva da host centrale, è il primo a giocare. Ogni giocatore deve 
+Finita la fase di registrazione, quindi, comincia la fase di gioco. Il giocatore che fungeva da host centrale è il primo a giocare. Ogni giocatore deve 
 attendere il proprio turno per poter giocare la sua mossa. Quando un giocatore effettua una mossa, questa viene notificata a tutti gli altri giocatori e 
-sarà visibile nell'interfaccia di gioco. Tramite l'interfaccia, è possibile osservare lo stato di gioco, cioè sapere chi ha il turno, quante le carte nella 
+sarà visibile nell'interfaccia di gioco. Tramite l'interfaccia, è possibile osservare lo stato di gioco, cioè sapere chi ha il turno, quante carte nella 
 mano ha ogni giocatore e quante carte rimangono nel ``mazzo di pesca''. Durante il gioco, alcuni giocatori potrebbero abbandonare la partita oppure
 la loro macchina potrebbe andare in crash. In tal caso, il giocatore viene rimosso dalla partita corrente senza avere la possibilità di ritornare in gara, 
 mentre i restanti giocatori possono continuare normalmente la partita. Per decretare un vincitore, invece, ci sono due possibilità: 
 o il giocatore ha terminato tutte le carte della propria mano, oppure è rimasto l'unico giocatore attivo nel tavolo di gioco. 
 In tal caso, una label notificherà al giocatore la sua vittoria.
 
-Problemi??
+\subsection{Problematiche Affrontate}
+Di seguito saranno esposte alcune problematiche affrontate nella realizzazione del gioco e come sono state risolte:
+\begin{itemize}
+  \item \emph{Rilevamento di un crash in tempo reale}: essendo UNO, un gioco di carte in cui il turno è posseduto esclusivamente da un giocatore per volta, e,
+  data l'architettura scelta, risulta difficile ottenere le informazioni di un crash in tempo reale, senza un continuo scambio di messaggi tra i vari host.
+  Per ovviare a tale impedimento, si è pensato di istanziare un timer per ogni giocatore che, ogni 40 millisecondi, interroga il proprio successore nell'anello
+  per verificare se risulta attivo. Nel caso in cui sia rilevato il crash, viene avviata la procedura per la gestione del crash e permettere il normale 
+  proseguimento del gioco.
+  \item \emph{Mantenere lo stato di gioco aggiornato}: quando un giocatore che possiede il turno abbandona il gioco a causa di un crash, c'è la possibilità che 
+  lo stato di gioco aggiornato vada perso. Tuttavia, permettendo ad ogni player di salvare l'ultimo stato di gioco corretto, quando viene rilevato il crash del 
+  giocatore di turno, viene anche rispedito il messaggio contenente le informazioni dello stato di gioco corretto a tutti gli utenti ancora connessi.
+  \item \emph{Gestione della carta ``Cambio giro''}: data la struttura ad anello, quando viene giocata una carta ``Cambio giro'' risulta più semplice modificare
+  anche il verso della circolazione dei messaggi. Quindi, lo stato di gioco contiene una variabile in grado di determinare il verso dello scambio dei messaggi
+  a seconda dell'attivazione o meno della carta speciale.
+\end{itemize}
+
 \section{Implementazione}
-\subsection{}
+Il gioco è stato realizzato utilizzando il linguaggio Java, il quale fornisce il framework \emph{RMI} per la realizzazione di applicazioni distribuite.
+Nell'implementazione del gioco, è stato utilizzato il design pattern \emph{Singleton}, attraverso il quale si garantisce che di una specifica classe venga 
+generata un'unica istanza, accessibile in maniera globale da ogni punto del codice.\\
+Essendo UNO un gioco di carte in cui, in ogni istante, un solo giocatore possiede il turno di gioco, è risultato logico utilizzare una struttura di comunicazione
+ad anello. Infatti, quando un giocatore effettua una mossa, lo comunica al giocatore successivo, il quale, a sua volta, inoltrerà il messaggio al suo successivo.
+Così facendo, il messaggio attraversa tutto l'anello fino ad arrivare di nuovo al mittente del messaggio e, quindi, ogni giocatore riceve gli 
+aggiornamenti dello stato di gioco.\\
+Di seguito, vengono riportati i diagrammi UML e una breve descrizione delle classi implementate, divise in 3 package: \emph{UnoRMI}, contenente le classi per 
+la registrazione al gioco e la comunicazione tra i peer, \emph{UnoGame}, che contiene le classi per la logica di gioco, e \emph{UnoUI}, per l'interfaccia 
+grafica.
+
+\subsection{Package UnoRMI}
+Nel package \emph{UnoRMI} troviamo le classi che permettono ai peer di registrarsi nell'arena di gioco e, successivamente, comunicare tra loro per inviare 
+gli aggiornamenti dello stato di gioco. Di seguito verranno descritte le classi più importanti:
+\begin{itemize}
+ \item \emph{Manager}: tale classe si occupa interamente della gestione di tutti gli aspetti del giocatore, dello stato di gioco e della comunicazione 
+ con gli altri giocatori. 
+ \item \emph{Arena}: classe che rappresenta l'arena di gioco alla quale i giocatori si registrano. Inoltre, tale classe contiene i dettagli di tutti i giocatori
+ connessi.
+ \item \emph{Player}: identifica il giocatore e tiene traccia di tutte le sue informazioni, come l'id univoco, l'indirizzo IP, l'username.
+ \item \emph{Message}: rappresenta la primitiva utilizzata per la comunicazione tra i peer. Ogni messaggio inviato ha un tipo e delle variabili associate:
+ \begin{itemize}
+  \item MOVE: indica la mossa effettuata dal mittente del messaggio;
+  \item PASS: indica che il giocatore ha passato il turno;
+  \item SHUFFLEMOVE: indica che il mittente, oltre ad aver giocato una carta, ha anche rimescolato il mazzo perché il ``mazzo pesca'' era terminato;  
+  \item SHUFFLEPASS: indica che il mittente, oltre ad aver passato il turno, ha anche rimescolato il mazzo perché il ``mazzo pesca'' era terminato;
+  \item ARENA: viene inviato in fase di registrazione per consentire al giocatore di partecipare all'arena di gioco attiva;
+  \item PLAYER: viene inviato quando un giocatore è andato in crash e, quindi, l'identità del giocatore viene comunicata a tutto l'anello per permettere 
+  la rimozione del giocatore.
+ \end{itemize}
+ A seconda del tipo di messaggio, ogni host che lo riceve, effettua determinate azioni.
+ \item \emph{ServerRegistration}: classe che implementa un servizio di registrazione centralizzato, in remoto, dei giocatori. Si occupa, di allestire l'arena
+ di gioco e di aggiungervi i partecipanti.
+ \item \emph{ServerCommunication}: classe che implementa i metodi remoti necessari per la comunicazione tra i vari giocatori connessi all'arena di gioco. 
+ Permette, quindi, la ricezione e l'invio dei messaggi e consente di ottenere l'interfaccia di rete del prossimo host al quale inoltrare il messaggio.
+ \item \emph{CrashManager}: si occupa di gestire i crash che avvengono durante una partita, provvedendo ad eliminare i giocatori non connessi e a notificare
+ i restanti giocatori dell'avvenuto crash.
+\end{itemize}
+
+\subsection{Package UnoGame}
+
+\subsection{Package UnoUI}
+
 \section{Conclusioni}
-
+In questo documento, è stato descritta l'implementazione di una versione distribuita del gioco di carte UNO. Tramite la struttura ad anello e 
+lo scambio dei messaggi, ogni giocatore è aggiornato in tempo reale sullo stato di gioco. 
+Inoltre, grazie alla gestione dei crash, ogni giocatore ancora connesso è in grado di continuare indisturbato
+la propria sessione di gioco fino al termine della partita. Sono stati gestiti anche situazioni di errore particolari, tipo quando ad abbandonare la partita
+è proprio il giocatore che possiede il turno. In tal caso, lo stato della partita non viene alterato e il gioco continua normalmente.\\
+Come possibile miglioramento, si potrebbe migliorare l'interfaccia del pannello di registrazione.
+L'interfaccia grafica di gioco, invece, risulta essere piacevole e intuitiva e non richiede particolari raffinamenti.  
 \end{document}
-
 
