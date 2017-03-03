@@ -56,8 +56,8 @@
 %%% END Article customizations
 
 
-\title{UNO\\Progetto del Corso di Sistemi Distribuiti\\A.A. 2016/2017}
-\author{Angelo De Lisa, Alessio Netti \\ \\ angelo.delisa@studio.unibo.it\\ mail alessio}
+\title{Il Gioco di Carte Uno\\Progetto del Corso di Sistemi Distribuiti\\A.A. 2016/2017}
+\author{Angelo De Lisa, Alessio Netti \\ \\ angelo.delisa@studio.unibo.it\\ alessio.netti@studio.unibo.it}
 \date{} % Activate to display a given date or no date (if empty),
          % otherwise the current date is printed 
 
@@ -73,6 +73,12 @@ In tal modo, anche se uno o più giocatori abbandonano la partita in seguito ad 
 la partita corrente. In questo documento, dunque, vengono descritte le scelte progettuali e le varie problematiche affrontate nella realizzazione dell'applicazione.
 \end{abstract}
 \end{otherlanguage}
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
 
 \section{Introduzione}
 UNO è un gioco di carte in cui il numero di giocatori può variare da 2 a 8. L'obiettivo del gioco è quello di scartare, per primo, tutte le carte nella 
@@ -179,8 +185,25 @@ gli aggiornamenti dello stato di gioco. Di seguito verranno descritte le classi 
 \end{itemize}
 
 \subsection{Package UnoGame}
+Il package UnoGame include tutte le classi destinate all'implmentazione della logica di gioco effettiva. Troviamo, dunque, tutte le classi necessarie per la rappresentazione degli oggetti di gioco, delle relative regole, nonché per l'aggiornamento dello stesso. In particolare, il package si compone delle seguenti classi:
+
+\begin{itemize}
+	\item \emph{Card}: questa classe codifica il più semplice oggetto di gioco, ossia la \textit{carta}. Tale oggetto è identificato da un valore numerico ed un tipo, dipendenti dalla specifica carta. La classe, inoltre, implementa metodi per determinare se una carta può essere giocata su di un'altra, realizzando gran parte delle regole di gioco.
+	\item \emph{Deck}: tale classe implementa il \textit{mazzo} di gioco, che si compone di tre elementi, ossia il mazzo di carte pescabili, il mazzo di carte scartate, ed infine la carta attualmente attiva, rispetto alla quale vanno effettuate mosse. Tale classe realizza anche metodi per l'inizializzazione ed il mescolamento del mazzo, nonché per l'estrazione di carte. 
+	\item \emph{GameState}: Il GameState codifica lo stato attuale del gioco dal punto di vista di un singolo giocatore. Essa include, di conseguenza, il Deck di gioco attuale (uguale per tutti i giocatori) e la \textit{mano} del giocatore, realizzata come \textit{collezione} di oggetti Card. Sono presenti, inoltre, alcune variabili atte a semplificare la gestione del turno. Altre variabili relative alla gestione del gioco, come l'ID del giocatore che attualmente detiene il turno oppure l'ID del vincitore, sono gestite dalla classe Manager in modo da semplificarne la manipolazione, in questo caso maggiormente legata all'oggetto Arena attuale.
+\end{itemize} 
 
 \subsection{Package UnoUI}
+Nel package UnoUI possiamo ritrovare la realizzazione dell'interfaccia di gioco. Essa consta di due componenti principali: una interfaccia di configurazione iniziale, realizzata tramite la libreria Java Swing, e l'interfaccia di gioco effettiva, realizzata in OpenGL per mezzo della libreria LibGDX. Le classi ritrovabili all'interno del pacchetto sono le seguenti:
+
+\begin{itemize}
+	\item \emph{DesktopLauncher}: in questa classe è implementato il metodo \textit{main} atto all'avvio dell'intera applicazione. Essa si occupa dunque di avviare l'interfaccia di configurazione, e successivamente di procedere alla connessione con la macchina \textit{host} ed all'avvio dell'interfaccia di gioco.
+	\item \emph{ConfigPanel}: tale classe implementa l'interfaccia di configurazione iniziale, realizzata tramite la libreria Swing di Java. Essa presenta due \textit{fields} testuali per l'inserimento dell'username e dell'indirizzo IP relativo alla macchina Host della partita, oltre ad un \textit{checkbox} utilizzato nel caso in cui si voglia impersonare tale ruolo. Infine, è presente un menu a tendina per la selezione del numero di giocatori, attivato solo nel caso in cui si scelga di fungere da Host per la partita.
+	\item \emph{UnoUIMain}: classe che realizza l'interfaccia di gioco vera e propria, realizzata tramite la libreria LibGDX, basata su OpenGL. Differentemente dall'uso di Swing, in cui il ri-disegno avviene soltanto su richiesta, in questo caso troviamo un metodo \textit{render}, richiamato automaticamente ad intervalli regolari in modo da realizzare una interfaccia fluida e reattiva. La gestione dell'input utente avviene in questa stessa classe, internamente al metodo \textit{render}.
+	\item \emph{UnoUIContext}: si tratta di una classe di gestione del \textit{contesto} OpenGL, istanziata all'avvio dell'applicazione, ma non realmente utilizzata, seppur necessaria.
+	\item \emph{CardBox}: implementa il \textit{box} scrollabile posto nella parte inferiore dell'interfaccia, che rappresenta l'insieme di carte appartenenti alla mano del giocatore. Essa realizza tutti i metodi per il rendering, l'aggiornamento e l'interazione con tale parte dell'interfaccia.
+	\item \emph{TextureLoader}: classe che si occupa della gestione statica di tutte le risorse grafiche, tra cui textures e fonts, che vengono allocate una sola volta, e poi riutilizzate in parti differenti dell'applicazione. Tale classe si basa sul design pattern \textit{singleton}, e permette un più efficiente utilizzo della memoria grafica. 
+\end{itemize}
 
 \section{Conclusioni}
 In questo documento, è stato descritta l'implementazione di una versione distribuita del gioco di carte UNO. Tramite la struttura ad anello e 
