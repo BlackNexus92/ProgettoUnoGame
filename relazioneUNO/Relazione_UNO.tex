@@ -56,7 +56,7 @@
 %%% END Article customizations
 
 
-\title{Il Gioco di Carte Uno\\Progetto del Corso di Sistemi Distribuiti\\A.A. 2016/2017}
+\title{Il Gioco di Carte UNO\\Progetto del Corso di Sistemi Distribuiti\\A.A. 2016/2017}
 \author{Angelo De Lisa, Alessio Netti \\ \\ angelo.delisa@studio.unibo.it\\ alessio.netti@studio.unibo.it}
 \date{} % Activate to display a given date or no date (if empty),
          % otherwise the current date is printed 
@@ -143,6 +143,7 @@ Di seguito saranno esposte alcune problematiche affrontate nella realizzazione d
   a seconda dell'attivazione o meno della carta speciale.
 \end{itemize}
 
+\vspace{3mm}
 \section{Implementazione}
 Il gioco è stato realizzato utilizzando il linguaggio Java, il quale fornisce il framework \emph{RMI} per la realizzazione di applicazioni distribuite.
 Nell'implementazione del gioco, è stato utilizzato il design pattern \emph{Singleton}, attraverso il quale si garantisce che di una specifica classe venga 
@@ -158,6 +159,12 @@ grafica.
 \subsection{Package UnoRMI}
 Nel package \emph{UnoRMI} troviamo le classi che permettono ai peer di registrarsi nell'arena di gioco e, successivamente, comunicare tra loro per inviare 
 gli aggiornamenti dello stato di gioco. Di seguito verranno descritte le classi più importanti:
+\begin{figure}[h]
+\centering%
+\includegraphics[height=13.5cm, width=14cm, keepaspectratio]{/home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/unoRMI.png}%
+\caption{Diagramma delle classi del package UnoRMI.}
+\end{figure}
+
 \begin{itemize}
  \item \emph{Manager}: tale classe si occupa interamente della gestione di tutti gli aspetti del giocatore, dello stato di gioco e della comunicazione 
  con gli altri giocatori. 
@@ -185,6 +192,11 @@ gli aggiornamenti dello stato di gioco. Di seguito verranno descritte le classi 
 
 \subsection{Package UnoGame}
 Il package UnoGame include tutte le classi destinate all'implementazione della logica di gioco effettiva. Troviamo, dunque, tutte le classi necessarie per la rappresentazione degli oggetti di gioco, delle relative regole, nonché per l'aggiornamento dello stesso. In particolare, il package si compone delle seguenti classi:
+\begin{figure}[h]
+\centering%
+\includegraphics[height=13.5cm, width=14cm, keepaspectratio]{/home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoGame.png}%
+\caption{Diagramma delle classi del package UnoGame.}
+\end{figure}
 
 \begin{itemize}
 	\item \emph{Card}: questa classe codifica il più semplice oggetto di gioco, ossia la \textit{carta}. Tale oggetto è identificato da un valore numerico ed un tipo, dipendenti dalla specifica carta. La classe, inoltre, implementa metodi per determinare se una carta può essere giocata su di un'altra, realizzando gran parte delle regole di gioco.
@@ -194,7 +206,11 @@ Il package UnoGame include tutte le classi destinate all'implementazione della l
 
 \subsection{Package UnoUI}
 Nel package UnoUI possiamo ritrovare la realizzazione dell'interfaccia di gioco. Essa consta di due componenti principali: una interfaccia di configurazione iniziale, realizzata tramite la libreria Java Swing, e l'interfaccia di gioco effettiva, realizzata in OpenGL per mezzo della libreria LibGDX. Le classi ritrovabili all'interno del pacchetto sono le seguenti:
-
+\begin{figure}[h]
+\centering%
+\includegraphics[height=13.5cm, width=14cm, keepaspectratio]{/home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoUI.png}%
+\caption{Diagramma delle classi del package UnoUI.}
+\end{figure}
 \begin{itemize}
 	\item \emph{DesktopLauncher}: in questa classe è implementato il metodo \textit{main} atto all'avvio dell'intera applicazione. Essa si occupa dunque di avviare l'interfaccia di configurazione, e successivamente di procedere alla connessione con la macchina \textit{host} ed all'avvio dell'interfaccia di gioco.
 	\item \emph{ConfigPanel}: tale classe implementa l'interfaccia di configurazione iniziale, realizzata tramite la libreria Swing di Java. Essa presenta due \textit{fields} testuali per l'inserimento dell'username e dell'indirizzo IP relativo alla macchina Host della partita, oltre ad un \textit{checkbox} utilizzato nel caso in cui si voglia impersonare tale ruolo. Infine, è presente un menu a tendina per la selezione del numero di giocatori, attivato solo nel caso in cui si scelga di fungere da Host per la partita.
@@ -204,12 +220,15 @@ Nel package UnoUI possiamo ritrovare la realizzazione dell'interfaccia di gioco.
 	\item \emph{TextureLoader}: classe che si occupa della gestione statica di tutte le risorse grafiche, tra cui textures e fonts, che vengono allocate una sola volta, e poi riutilizzate in parti differenti dell'applicazione. Tale classe si basa sul design pattern \textit{singleton}, e permette un più efficiente utilizzo della memoria grafica. 
 \end{itemize}
 
+\vspace{3mm}
 \section{Conclusioni}
 In questo documento, è stato descritta l'implementazione di una versione distribuita del gioco di carte UNO. Tramite la struttura ad anello e 
 lo scambio dei messaggi, ogni giocatore è aggiornato in tempo reale sullo stato di gioco. 
 Inoltre, grazie alla gestione dei crash, ogni giocatore ancora connesso è in grado di continuare indisturbato
-la propria sessione di gioco fino al termine della partita. Sono state gestite anche situazioni di errore particolari, ad esempio quando ad abbandonare la partita
-è proprio il giocatore che possiede il turno. In tal caso, lo stato della partita non viene alterato e il gioco continua normalmente.\\
+la propria sessione di gioco fino al termine della partita. Sono state gestite anche situazioni di errore particolari, ad esempio quando ad abbandonare
+la partita è proprio il giocatore che possiede il turno. In tal caso, lo stato della partita non viene alterato e il gioco continua normalmente. 
+Riassumendo, l'applicazione è in grado di tollerare \emph{n-1} guasti (con \emph{n}=numero di giocatori). In questo modo, la partita rimane attiva finchè è 
+connesso almeno un giocatore, il quale, però, sarà decretato vincitore della partita in quanto l'unico attivo nell'arena di gioco.\\
 Come possibile ulteriore sviluppo, si potrebbe migliorare l'interfaccia del pannello di registrazione.
 L'interfaccia grafica di gioco, invece, risulta essere piacevole e intuitiva e non richiede particolari raffinamenti.  
 \end{document}

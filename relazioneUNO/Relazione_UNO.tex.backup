@@ -56,8 +56,8 @@
 %%% END Article customizations
 
 
-\title{UNO\\Progetto del Corso di Sistemi Distribuiti\\A.A. 2016/2017}
-\author{Angelo De Lisa, Alessio Netti \\ \\ angelo.delisa@studio.unibo.it\\ mail alessio}
+\title{Il Gioco di Carte UNO\\Progetto del Corso di Sistemi Distribuiti\\A.A. 2016/2017}
+\author{Angelo De Lisa, Alessio Netti \\ \\ angelo.delisa@studio.unibo.it\\ alessio.netti@studio.unibo.it}
 \date{} % Activate to display a given date or no date (if empty),
          % otherwise the current date is printed 
 
@@ -73,6 +73,12 @@ In tal modo, anche se uno o più giocatori abbandonano la partita in seguito ad 
 la partita corrente. In questo documento, dunque, vengono descritte le scelte progettuali e le varie problematiche affrontate nella realizzazione dell'applicazione.
 \end{abstract}
 \end{otherlanguage}
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
 
 \section{Introduzione}
 UNO è un gioco di carte in cui il numero di giocatori può variare da 2 a 8. L'obiettivo del gioco è quello di scartare, per primo, tutte le carte nella 
@@ -98,18 +104,18 @@ al mazzo degli scarti, oppure è una carta ``\emph{Pesca 4}'' o ``\emph{Cambia c
 L'obiettivo di questo progetto è la realizzazione di una versione distribuita del gioco di carte UNO che sia utilizzabile, tramite un'interfaccia grafica 
 piacevole, su più macchine differenti interconnesse tra loro. In particolare, è stata posta l'attenzione sulla tolleranza ai crash delle macchine coinvolte.
 Infatti, il gioco continua la sua normale esecuzione nel caso in cui un giocatore abbandoni prematuramente la partita oppure la sua macchina vada in crash.\\
-Nel resto del documento, verrà data una panoramica del gioco nella Sezione 2; nella Sezione 3, verranno presentati gli aspetti implementativi;
+Il resto del documento si articola come segue: verrà data una panoramica del gioco nella Sezione 2; nella Sezione 3, verranno presentati gli aspetti implementativi;
 il documento si conclude con possibili miglioramenti e considerazioni finali.
 
 \section{Panoramica del Gioco}
-In questa Sezione, vengono descritto il funzionamento del gioco e le varie problematiche affrontate.
+In questa Sezione, vengono descritti il funzionamento del gioco e le varie problematiche affrontate.
 
 \subsection{Descrizione del Gioco}
 L'architettura dell'applicazione realizzata è di tipo distribuito. L'unica forma di centralizzazione utilizzata è quella che consente la registrazione dei 
 partecipanti al gioco. In questo scenario, uno dei giocatori sceglie di essere l'entità centrale semplicemente spuntando la casella presente nel pannello 
 di registrazione. Successivamente, una volta indicato il proprio username e il numero di partecipanti alla partita, viene inizializzato lo stato del gioco e
-avviata l'interfaccia di gioco. In tale schermata, è, inoltre, presente l'indirizzo IP al quale gli altri peer devono connettersi per poter partecipare alla 
-partita appena avviata. Quindi, i restanti giocatori dovranno inserire nell'apposito campo ``IP Host'', l'indirizzo IP dell'host. Ogni volta che un peer si
+avviata l'interfaccia. In tale schermata, è, inoltre, presente l'indirizzo IP al quale gli altri peer devono connettersi per poter partecipare alla 
+partita appena avviata. Quindi, i restanti giocatori dovranno inserire nell'apposito campo ``IP Host'', l'indirizzo IP dell'host. Tale termine deriva dal gergo relativo all'online gaming, in cui per \textit{host} si intende il giocatore che \textit{ospita} e coordina la partita. Ogni volta che un peer si
 connette alla partita, l'interfaccia di gioco viene aggiornata mostrando i giocatori attualmente connessi. Quando tutti i giocatori hanno effettuato la 
 registrazione alla partita, la fase di registrazione termina e nessun peer fungerà da entità centrale. Da quel momento in poi, le comunicazioni avverranno 
 solamente in maniera peer-to-peer.\\
@@ -123,11 +129,20 @@ o il giocatore ha terminato tutte le carte della propria mano, oppure è rimasto
 In tal caso, una label notificherà al giocatore la sua vittoria.
 
 \subsection{Problematiche Affrontate}
-Problemi
-Tra le problematiche affrontate nella realizzazione del gioco, 
-1: rilevare crash in tempo reale
-2: inviare stato quando crasha giocatore col turno
-3: cambio giro
+Di seguito saranno esposte alcune problematiche affrontate nella realizzazione del gioco e come sono state risolte:
+\begin{itemize}
+  \item \emph{Rilevamento di un crash in tempo reale}: essendo UNO, un gioco di carte in cui il turno è posseduto esclusivamente da un giocatore per volta, e,
+  data l'architettura scelta, risulta difficile ottenere le informazioni di un crash in tempo reale, senza un continuo scambio di messaggi tra i vari host.
+  Per ovviare a tale impedimento, si è pensato di istanziare un timer per ogni giocatore che, ogni 40 millisecondi, interroga il proprio successore nell'anello
+  per verificare se risulta attivo. Nel caso in cui sia rilevato il crash, viene avviata la procedura per la gestione del crash e permettere il normale 
+  proseguimento del gioco.
+  \item \emph{Mantenere lo stato di gioco aggiornato}: quando un giocatore che possiede il turno abbandona il gioco a causa di un crash, risulta necessario attribuire il turno stesso ad un altro giocatore. Tuttavia, permettendo ad ogni player di salvare l'ultimo stato di gioco corretto, quando viene rilevato il crash del 
+  giocatore di turno, viene anche rispedito il messaggio contenente le informazioni dello stato di gioco corretto a tutti gli utenti ancora connessi, permettendo di riprendere la partita. Un semplice sistema di numeri di sequenza, basato sul numero di turni giocati, permette di prevenire inconsistenze nell'aggiornamento degli stati di gioco.
+  \item \emph{Gestione della carta ``Cambio giro''}: data la struttura ad anello, quando viene giocata una carta ``Cambio giro'' risulta più semplice modificare
+  anche il verso della circolazione dei messaggi. Quindi, lo stato di gioco contiene una variabile in grado di determinare il verso dello scambio dei messaggi
+  a seconda dell'attivazione o meno della carta speciale.
+\end{itemize}
+
 \section{Implementazione}
 Il gioco è stato realizzato utilizzando il linguaggio Java, il quale fornisce il framework \emph{RMI} per la realizzazione di applicazioni distribuite.
 Nell'implementazione del gioco, è stato utilizzato il design pattern \emph{Singleton}, attraverso il quale si garantisce che di una specifica classe venga 
@@ -143,6 +158,12 @@ grafica.
 \subsection{Package UnoRMI}
 Nel package \emph{UnoRMI} troviamo le classi che permettono ai peer di registrarsi nell'arena di gioco e, successivamente, comunicare tra loro per inviare 
 gli aggiornamenti dello stato di gioco. Di seguito verranno descritte le classi più importanti:
+\begin{figure}[h]
+\centering%
+\includegraphics[height=13.5cm, width=14cm, keepaspectratio]{/home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/unoRMI.png}%
+\caption{Diagramma delle classi del package UnoRMI.}
+\end{figure}
+
 \begin{itemize}
  \item \emph{Manager}: tale classe si occupa interamente della gestione di tutti gli aspetti del giocatore, dello stato di gioco e della comunicazione 
  con gli altri giocatori. 
@@ -169,16 +190,44 @@ gli aggiornamenti dello stato di gioco. Di seguito verranno descritte le classi 
 \end{itemize}
 
 \subsection{Package UnoGame}
+Il package UnoGame include tutte le classi destinate all'implementazione della logica di gioco effettiva. Troviamo, dunque, tutte le classi necessarie per la rappresentazione degli oggetti di gioco, delle relative regole, nonché per l'aggiornamento dello stesso. In particolare, il package si compone delle seguenti classi:
+\begin{figure}[h]
+\centering%
+\includegraphics[height=13.5cm, width=14cm, keepaspectratio]{/home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoGame.png}%
+\caption{Diagramma delle classi del package UnoGame.}
+\end{figure}
+
+\begin{itemize}
+	\item \emph{Card}: questa classe codifica il più semplice oggetto di gioco, ossia la \textit{carta}. Tale oggetto è identificato da un valore numerico ed un tipo, dipendenti dalla specifica carta. La classe, inoltre, implementa metodi per determinare se una carta può essere giocata su di un'altra, realizzando gran parte delle regole di gioco.
+	\item \emph{Deck}: tale classe implementa il \textit{mazzo} di gioco, che si compone di tre elementi, ossia il mazzo di carte pescabili, il mazzo di carte scartate, ed infine la carta attualmente attiva, rispetto alla quale vanno effettuate mosse. Tale classe realizza anche metodi per l'inizializzazione ed il mescolamento del mazzo, nonché per l'estrazione di carte. 
+	\item \emph{GameState}: Il GameState codifica lo stato attuale del gioco dal punto di vista di un singolo giocatore. Essa include, di conseguenza, il Deck di gioco attuale (uguale per tutti i giocatori) e la \textit{mano} del giocatore, realizzata come \textit{collezione} di oggetti Card. Sono presenti, inoltre, alcune variabili atte a semplificare la gestione del turno. Altre variabili relative alla gestione del gioco, come l'ID del giocatore che attualmente detiene il turno oppure l'ID del vincitore, sono gestite dalla classe Manager in modo da semplificarne la manipolazione, in questo caso maggiormente legata all'oggetto Arena attuale.
+\end{itemize} 
 
 \subsection{Package UnoUI}
+Nel package UnoUI possiamo ritrovare la realizzazione dell'interfaccia di gioco. Essa consta di due componenti principali: una interfaccia di configurazione iniziale, realizzata tramite la libreria Java Swing, e l'interfaccia di gioco effettiva, realizzata in OpenGL per mezzo della libreria LibGDX. Le classi ritrovabili all'interno del pacchetto sono le seguenti:
+\begin{figure}[h]
+\centering%
+\includegraphics[height=13.5cm, width=14cm, keepaspectratio]{/home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoUI.png}%
+\caption{Diagramma delle classi del package UnoUI.}
+\end{figure}
+\begin{itemize}
+	\item \emph{DesktopLauncher}: in questa classe è implementato il metodo \textit{main} atto all'avvio dell'intera applicazione. Essa si occupa dunque di avviare l'interfaccia di configurazione, e successivamente di procedere alla connessione con la macchina \textit{host} ed all'avvio dell'interfaccia di gioco.
+	\item \emph{ConfigPanel}: tale classe implementa l'interfaccia di configurazione iniziale, realizzata tramite la libreria Swing di Java. Essa presenta due \textit{fields} testuali per l'inserimento dell'username e dell'indirizzo IP relativo alla macchina Host della partita, oltre ad un \textit{checkbox} utilizzato nel caso in cui si voglia impersonare tale ruolo. Infine, è presente un menu a tendina per la selezione del numero di giocatori, attivato solo nel caso in cui si scelga di fungere da Host per la partita.
+	\item \emph{UnoUIMain}: classe che realizza l'interfaccia di gioco vera e propria, realizzata tramite la libreria LibGDX, basata su OpenGL. Differentemente dall'uso di Swing, in cui il ri-disegno avviene soltanto su richiesta, in questo caso troviamo un metodo \textit{render}, richiamato automaticamente ad intervalli regolari in modo da realizzare una interfaccia fluida e reattiva. La gestione dell'input utente avviene in questa stessa classe, internamente al metodo \textit{render}.
+	\item \emph{UnoUIContext}: si tratta di una classe di gestione del \textit{contesto} OpenGL, istanziata all'avvio dell'applicazione, ma non realmente utilizzata, seppur necessaria.
+	\item \emph{CardBox}: implementa il \textit{box} scrollabile posto nella parte inferiore dell'interfaccia, che rappresenta l'insieme di carte appartenenti alla mano del giocatore. Essa realizza tutti i metodi per il rendering, l'aggiornamento e l'interazione con tale parte dell'interfaccia.
+	\item \emph{TextureLoader}: classe che si occupa della gestione statica di tutte le risorse grafiche, tra cui textures e fonts, che vengono allocate una sola volta, e poi riutilizzate in parti differenti dell'applicazione. Tale classe si basa sul design pattern \textit{singleton}, e permette un più efficiente utilizzo della memoria grafica. 
+\end{itemize}
 
 \section{Conclusioni}
 In questo documento, è stato descritta l'implementazione di una versione distribuita del gioco di carte UNO. Tramite la struttura ad anello e 
 lo scambio dei messaggi, ogni giocatore è aggiornato in tempo reale sullo stato di gioco. 
 Inoltre, grazie alla gestione dei crash, ogni giocatore ancora connesso è in grado di continuare indisturbato
-la propria sessione di gioco fino al termine della partita. Sono stati gestiti anche situazioni di errore particolari, tipo quando ad abbandonare la partita
-è proprio il giocatore che possiede il turno. In tal caso, lo stato della partita non viene alterato e il gioco continua normalmente.\\
-Come possibile miglioramento, si potrebbe migliorare l'interfaccia del pannello di registrazione.
+la propria sessione di gioco fino al termine della partita. Sono state gestite anche situazioni di errore particolari, ad esempio quando ad abbandonare
+la partita è proprio il giocatore che possiede il turno. In tal caso, lo stato della partita non viene alterato e il gioco continua normalmente. 
+L'applicazione, dunque, è in grado di tollerare \emph{n-1} guasti (con \emph{n}=numero di giocatori). In questo modo, la partita rimane attiva finchè è 
+connesso almeno un giocatore, il quale, però, sarà decretato vincitore della partita in quanto l'unico attivo nell'arena di gioco.\\
+Come possibile ulteriore sviluppo, si potrebbe migliorare l'interfaccia del pannello di registrazione.
 L'interfaccia grafica di gioco, invece, risulta essere piacevole e intuitiva e non richiede particolari raffinamenti.  
 \end{document}
 

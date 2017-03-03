@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.6.7)  3 MAR 2017 13:17
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.6.7)  3 MAR 2017 18:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -680,36 +680,86 @@ e
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: subfig package v1.3 is loaded.
 Package caption Info: End \AtBeginDocument code.
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 83.
 
-(/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./Relazione_UNO.toc)
+\tf@toc=\write3
+\openout3 = `Relazione_UNO.toc'.
+
+
+[2]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 89.
+ (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 83.
- [1
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 89.
+ [3] [4]
+</home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/unoRMI.png, id=22, 949.
+5475pt x 1071.00125pt>
+File: /home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/unoRMI.png Graphic
+ file (type png)
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4] [5] (./Relazio
-ne_UNO.aux) ) 
+<use /home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/unoRMI.png>
+Package pdftex.def Info: /home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO
+/unoRMI.png used on input line 164.
+(pdftex.def)             Requested size: 340.56181pt x 384.12206pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[5] [6 </home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/unoRMI.png (PNG 
+copy)>]
+</home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoGame.png, id=29, 558
+.085pt x 773.89125pt>
+File: /home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoGame.png Graphi
+c file (type png)
+
+<use /home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoGame.png>
+Package pdftex.def Info: /home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO
+/UnoGame.png used on input line 197.
+(pdftex.def)             Requested size: 276.99805pt x 384.11061pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[7]
+</home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoUI.png, id=34, 985.6
+825pt x 935.495pt>
+File: /home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoUI.png Graphic 
+file (type png)
+
+<use /home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoUI.png>
+Package pdftex.def Info: /home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO
+/UnoUI.png used on input line 211.
+(pdftex.def)             Requested size: 398.34193pt x 378.05975pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[8 </home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoGame.png (PNG cop
+y)>] [9 </home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoUI.png (PNG 
+copy)>] [10] (./Relazione_UNO.aux) ) 
 Here is how much of TeX's memory you used:
- 5774 strings out of 495004
- 84582 string characters out of 6180663
- 165618 words of memory out of 5000000
- 8891 multiletter control sequences out of 15000+600000
- 10982 words of font info for 39 fonts, out of 8000000 for 9000
+ 5799 strings out of 495004
+ 85640 string characters out of 6180663
+ 164653 words of memory out of 5000000
+ 8908 multiletter control sequences out of 15000+600000
+ 11565 words of font info for 41 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
- 44i,10n,43p,265b,268s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx
-10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/s
-hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/te
-xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/share/texlive/
-texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on Relazione_UNO.pdf (5 pages, 101394 bytes).
+ 44i,10n,43p,686b,329s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.p
+fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
+Output written on Relazione_UNO.pdf (10 pages, 428579 bytes).
 PDF statistics:
- 48 PDF objects out of 1000 (max. 8388607)
- 33 compressed objects within 1 object stream
+ 68 PDF objects out of 1000 (max. 8388607)
+ 45 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
