@@ -104,18 +104,18 @@ al mazzo degli scarti, oppure è una carta ``\emph{Pesca 4}'' o ``\emph{Cambia c
 L'obiettivo di questo progetto è la realizzazione di una versione distribuita del gioco di carte UNO che sia utilizzabile, tramite un'interfaccia grafica 
 piacevole, su più macchine differenti interconnesse tra loro. In particolare, è stata posta l'attenzione sulla tolleranza ai crash delle macchine coinvolte.
 Infatti, il gioco continua la sua normale esecuzione nel caso in cui un giocatore abbandoni prematuramente la partita oppure la sua macchina vada in crash.\\
-Nel resto del documento, verrà data una panoramica del gioco nella Sezione 2; nella Sezione 3, verranno presentati gli aspetti implementativi;
+Il resto del documento si articola come segue: verrà data una panoramica del gioco nella Sezione 2; nella Sezione 3, verranno presentati gli aspetti implementativi;
 il documento si conclude con possibili miglioramenti e considerazioni finali.
 
 \section{Panoramica del Gioco}
-In questa Sezione, vengono descritto il funzionamento del gioco e le varie problematiche affrontate.
+In questa Sezione, vengono descritti il funzionamento del gioco e le varie problematiche affrontate.
 
 \subsection{Descrizione del Gioco}
 L'architettura dell'applicazione realizzata è di tipo distribuito. L'unica forma di centralizzazione utilizzata è quella che consente la registrazione dei 
 partecipanti al gioco. In questo scenario, uno dei giocatori sceglie di essere l'entità centrale semplicemente spuntando la casella presente nel pannello 
 di registrazione. Successivamente, una volta indicato il proprio username e il numero di partecipanti alla partita, viene inizializzato lo stato del gioco e
-avviata l'interfaccia di gioco. In tale schermata, è, inoltre, presente l'indirizzo IP al quale gli altri peer devono connettersi per poter partecipare alla 
-partita appena avviata. Quindi, i restanti giocatori dovranno inserire nell'apposito campo ``IP Host'', l'indirizzo IP dell'host. Ogni volta che un peer si
+avviata l'interfaccia. In tale schermata, è, inoltre, presente l'indirizzo IP al quale gli altri peer devono connettersi per poter partecipare alla 
+partita appena avviata. Quindi, i restanti giocatori dovranno inserire nell'apposito campo ``IP Host'', l'indirizzo IP dell'host. Tale termine deriva dal gergo relativo all'online gaming, in cui per \textit{host} si intende il giocatore che \textit{ospita} e coordina la partita. Ogni volta che un peer si
 connette alla partita, l'interfaccia di gioco viene aggiornata mostrando i giocatori attualmente connessi. Quando tutti i giocatori hanno effettuato la 
 registrazione alla partita, la fase di registrazione termina e nessun peer fungerà da entità centrale. Da quel momento in poi, le comunicazioni avverranno 
 solamente in maniera peer-to-peer.\\
@@ -136,9 +136,8 @@ Di seguito saranno esposte alcune problematiche affrontate nella realizzazione d
   Per ovviare a tale impedimento, si è pensato di istanziare un timer per ogni giocatore che, ogni 40 millisecondi, interroga il proprio successore nell'anello
   per verificare se risulta attivo. Nel caso in cui sia rilevato il crash, viene avviata la procedura per la gestione del crash e permettere il normale 
   proseguimento del gioco.
-  \item \emph{Mantenere lo stato di gioco aggiornato}: quando un giocatore che possiede il turno abbandona il gioco a causa di un crash, c'è la possibilità che 
-  lo stato di gioco aggiornato vada perso. Tuttavia, permettendo ad ogni player di salvare l'ultimo stato di gioco corretto, quando viene rilevato il crash del 
-  giocatore di turno, viene anche rispedito il messaggio contenente le informazioni dello stato di gioco corretto a tutti gli utenti ancora connessi.
+  \item \emph{Mantenere lo stato di gioco aggiornato}: quando un giocatore che possiede il turno abbandona il gioco a causa di un crash, risulta necessario attribuire il turno stesso ad un altro giocatore. Tuttavia, permettendo ad ogni player di salvare l'ultimo stato di gioco corretto, quando viene rilevato il crash del 
+  giocatore di turno, viene anche rispedito il messaggio contenente le informazioni dello stato di gioco corretto a tutti gli utenti ancora connessi, permettendo di riprendere la partita. Un semplice sistema di numeri di sequenza, basato sul numero di turni giocati, permette di prevenire inconsistenze nell'aggiornamento degli stati di gioco.
   \item \emph{Gestione della carta ``Cambio giro''}: data la struttura ad anello, quando viene giocata una carta ``Cambio giro'' risulta più semplice modificare
   anche il verso della circolazione dei messaggi. Quindi, lo stato di gioco contiene una variabile in grado di determinare il verso dello scambio dei messaggi
   a seconda dell'attivazione o meno della carta speciale.
@@ -185,7 +184,7 @@ gli aggiornamenti dello stato di gioco. Di seguito verranno descritte le classi 
 \end{itemize}
 
 \subsection{Package UnoGame}
-Il package UnoGame include tutte le classi destinate all'implmentazione della logica di gioco effettiva. Troviamo, dunque, tutte le classi necessarie per la rappresentazione degli oggetti di gioco, delle relative regole, nonché per l'aggiornamento dello stesso. In particolare, il package si compone delle seguenti classi:
+Il package UnoGame include tutte le classi destinate all'implementazione della logica di gioco effettiva. Troviamo, dunque, tutte le classi necessarie per la rappresentazione degli oggetti di gioco, delle relative regole, nonché per l'aggiornamento dello stesso. In particolare, il package si compone delle seguenti classi:
 
 \begin{itemize}
 	\item \emph{Card}: questa classe codifica il più semplice oggetto di gioco, ossia la \textit{carta}. Tale oggetto è identificato da un valore numerico ed un tipo, dipendenti dalla specifica carta. La classe, inoltre, implementa metodi per determinare se una carta può essere giocata su di un'altra, realizzando gran parte delle regole di gioco.
@@ -209,9 +208,9 @@ Nel package UnoUI possiamo ritrovare la realizzazione dell'interfaccia di gioco.
 In questo documento, è stato descritta l'implementazione di una versione distribuita del gioco di carte UNO. Tramite la struttura ad anello e 
 lo scambio dei messaggi, ogni giocatore è aggiornato in tempo reale sullo stato di gioco. 
 Inoltre, grazie alla gestione dei crash, ogni giocatore ancora connesso è in grado di continuare indisturbato
-la propria sessione di gioco fino al termine della partita. Sono stati gestiti anche situazioni di errore particolari, tipo quando ad abbandonare la partita
+la propria sessione di gioco fino al termine della partita. Sono state gestite anche situazioni di errore particolari, ad esempio quando ad abbandonare la partita
 è proprio il giocatore che possiede il turno. In tal caso, lo stato della partita non viene alterato e il gioco continua normalmente.\\
-Come possibile miglioramento, si potrebbe migliorare l'interfaccia del pannello di registrazione.
+Come possibile ulteriore sviluppo, si potrebbe migliorare l'interfaccia del pannello di registrazione.
 L'interfaccia grafica di gioco, invece, risulta essere piacevole e intuitiva e non richiede particolari raffinamenti.  
 \end{document}
 
