@@ -111,6 +111,13 @@ il documento si conclude con possibili miglioramenti e considerazioni finali.
 In questa Sezione, vengono descritti il funzionamento del gioco e le varie problematiche affrontate.
 
 \subsection{Descrizione del Gioco}
+
+\begin{figure}[h]
+\centering%
+\includegraphics[width=12cm, keepaspectratio]{configScreen1.png}%
+\caption{La schermata di configurazione del gioco, dal punto di vista dell'utente.}
+\end{figure}
+
 L'architettura dell'applicazione realizzata è di tipo distribuito. L'unica forma di centralizzazione utilizzata è quella che consente la registrazione dei 
 partecipanti al gioco. In questo scenario, uno dei giocatori sceglie di essere l'entità centrale semplicemente spuntando la casella presente nel pannello 
 di registrazione. Successivamente, una volta indicato il proprio username e il numero di partecipanti alla partita, viene inizializzato lo stato del gioco e
@@ -119,6 +126,13 @@ partita appena avviata. Quindi, i restanti giocatori dovranno inserire nell'appo
 connette alla partita, l'interfaccia di gioco viene aggiornata mostrando i giocatori attualmente connessi. Quando tutti i giocatori hanno effettuato la 
 registrazione alla partita, la fase di registrazione termina e nessun peer fungerà da entità centrale. Da quel momento in poi, le comunicazioni avverranno 
 solamente in maniera peer-to-peer.\\
+
+\begin{figure}[h]
+\centering%
+\includegraphics[width=12cm, keepaspectratio]{configScreen2.png}%
+\caption{La schermata di configurazione del gioco, dal punto di vista dell'utente host, atto a fungere da servizio di registrazione.}
+\end{figure}
+
 Finita la fase di registrazione, quindi, comincia la fase di gioco. Il giocatore che fungeva da host centrale è il primo a giocare. Ogni giocatore deve 
 attendere il proprio turno per poter giocare la sua mossa. Quando un giocatore effettua una mossa, questa viene notificata a tutti gli altri giocatori e 
 sarà visibile nell'interfaccia di gioco. Tramite l'interfaccia, è possibile osservare lo stato di gioco, cioè sapere chi ha il turno, quante carte nella 
@@ -129,6 +143,13 @@ o il giocatore ha terminato tutte le carte della propria mano, oppure è rimasto
 In tal caso, una label notificherà al giocatore la sua vittoria.
 
 \subsection{Problematiche Affrontate}
+
+\begin{figure}[h]
+\centering%
+\includegraphics[width=12cm, keepaspectratio]{gameScreen2.png}%
+\caption{Una schermata di gioco di esempio, in una partita a tre giocatori, a seguito della rilevazione del crash di uno degli utenti.}
+\end{figure}
+
 Di seguito saranno esposte alcune problematiche affrontate nella realizzazione del gioco e come sono state risolte:
 \begin{itemize}
   \item \emph{Rilevamento di un crash in tempo reale}: essendo UNO, un gioco di carte in cui il turno è posseduto esclusivamente da un giocatore per volta, e,
@@ -145,6 +166,13 @@ Di seguito saranno esposte alcune problematiche affrontate nella realizzazione d
 
 \vspace{3mm}
 \section{Implementazione}
+
+\begin{figure}[h]
+\centering%
+\includegraphics[width=12cm, keepaspectratio]{gameScreen1.png}%
+\caption{Una schermata di gioco di esempio, in una partita a tre giocatori.}
+\end{figure}
+
 Il gioco è stato realizzato utilizzando il linguaggio Java, il quale fornisce il framework \emph{RMI} per la realizzazione di applicazioni distribuite.
 Nell'implementazione del gioco, è stato utilizzato il design pattern \emph{Singleton}, attraverso il quale si garantisce che di una specifica classe venga 
 generata un'unica istanza, accessibile in maniera globale da ogni punto del codice.\\
@@ -161,7 +189,7 @@ Nel package \emph{UnoRMI} troviamo le classi che permettono ai peer di registrar
 gli aggiornamenti dello stato di gioco. Di seguito verranno descritte le classi più importanti:
 \begin{figure}[h]
 \centering%
-\includegraphics[height=13.5cm, width=14cm, keepaspectratio]{/home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/unoRMI.png}%
+\includegraphics[height=13.5cm, width=14cm, keepaspectratio]{unoRMI.png}%
 \caption{Diagramma delle classi del package UnoRMI.}
 \end{figure}
 
@@ -194,7 +222,7 @@ gli aggiornamenti dello stato di gioco. Di seguito verranno descritte le classi 
 Il package UnoGame include tutte le classi destinate all'implementazione della logica di gioco effettiva. Troviamo, dunque, tutte le classi necessarie per la rappresentazione degli oggetti di gioco, delle relative regole, nonché per l'aggiornamento dello stesso. In particolare, il package si compone delle seguenti classi:
 \begin{figure}[h]
 \centering%
-\includegraphics[height=13.5cm, width=14cm, keepaspectratio]{/home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoGame.png}%
+\includegraphics[height=13.5cm, width=14cm, keepaspectratio]{UnoGame.png}%
 \caption{Diagramma delle classi del package UnoGame.}
 \end{figure}
 
@@ -208,7 +236,7 @@ Il package UnoGame include tutte le classi destinate all'implementazione della l
 Nel package UnoUI possiamo ritrovare la realizzazione dell'interfaccia di gioco. Essa consta di due componenti principali: una interfaccia di configurazione iniziale, realizzata tramite la libreria Java Swing, e l'interfaccia di gioco effettiva, realizzata in OpenGL per mezzo della libreria LibGDX. Le classi ritrovabili all'interno del pacchetto sono le seguenti:
 \begin{figure}[h]
 \centering%
-\includegraphics[height=13.5cm, width=14cm, keepaspectratio]{/home/angelo/IdeaProjects/ProgettoUnoGame/relazioneUNO/UnoUI.png}%
+\includegraphics[height=13.5cm, width=14cm, keepaspectratio]{UnoUI.png}%
 \caption{Diagramma delle classi del package UnoUI.}
 \end{figure}
 \begin{itemize}

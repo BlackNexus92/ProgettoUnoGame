@@ -1,0 +1,13 @@
+\select@language {italian}
+\select@language {italian}
+\select@language {english}
+\select@language {italian}
+\contentsline {section}{\numberline {1}Introduzione}{3}
+\contentsline {section}{\numberline {2}Panoramica del Gioco}{4}
+\contentsline {subsection}{\numberline {2.1}Descrizione del Gioco}{4}
+\contentsline {subsection}{\numberline {2.2}Problematiche Affrontate}{5}
+\contentsline {section}{\numberline {3}Implementazione}{6}
+\contentsline {subsection}{\numberline {3.1}Package UnoRMI}{7}
+\contentsline {subsection}{\numberline {3.2}Package UnoGame}{9}
+\contentsline {subsection}{\numberline {3.3}Package UnoUI}{9}
+\contentsline {section}{\numberline {4}Conclusioni}{12}
