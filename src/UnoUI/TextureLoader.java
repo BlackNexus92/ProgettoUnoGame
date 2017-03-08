@@ -20,6 +20,8 @@ public class TextureLoader {
     private static int tx;
     private static int ty;
 
+    private static Texture canPlayTex;
+    private static Texture cannotPlayTex;
     private static Texture bgTex;
     private static Texture ccTex;
     private static boolean hasChanged = false;
@@ -126,6 +128,26 @@ public class TextureLoader {
         return bgTex;
     }
 
+    public static Texture loadCanPlayTexture()
+    {
+        if(canPlayTex==null)
+        {
+            canPlayTex = new Texture(Gdx.files.internal("res/canPlayTexture.png"));
+            canPlayTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        }
+        return canPlayTex;
+    }
+
+    public static Texture loadCannotPlayTexture()
+    {
+        if(cannotPlayTex==null)
+        {
+            cannotPlayTex = new Texture(Gdx.files.internal("res/cannotPlayTexture.png"));
+            cannotPlayTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        }
+        return cannotPlayTex;
+    }
+
     public static BitmapFont get22ptFont() {
         if(pt22font==null) {
             Texture texture = new Texture(Gdx.files.internal("res/arial22.png"));
@@ -146,15 +168,30 @@ public class TextureLoader {
 // Rilascia tutte le risorse grafiche presenti in memoria
     public static void dispose()
     {
-        deckTex.dispose();
-        bgTex.dispose();
-        pt22font.dispose();
-        cardBox.dispose();
-
-        cardBox=null;
-        deckTex=null;
-        bgTex=null;
-        pt22font=null;
+        if(deckTex!=null) {
+            deckTex.dispose();
+            deckTex=null;
+        }
+        if(bgTex!=null) {
+            bgTex.dispose();
+            bgTex=null;
+        }
+        if(pt22font!=null) {
+            pt22font.dispose();
+            pt22font=null;
+        }
+        if(cardBox!=null) {
+            cardBox.dispose();
+            cardBox=null;
+        }
+        if(canPlayTex!=null) {
+            canPlayTex.dispose();
+            canPlayTex=null;
+        }
+        if(cannotPlayTex!=null) {
+            cannotPlayTex.dispose();
+            cannotPlayTex=null;
+        }
     }
 
 

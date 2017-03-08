@@ -10,4 +10,5 @@
 \contentsline {subsection}{\numberline {3.1}Package UnoRMI}{7}
 \contentsline {subsection}{\numberline {3.2}Package UnoGame}{9}
 \contentsline {subsection}{\numberline {3.3}Package UnoUI}{9}
-\contentsline {section}{\numberline {4}Conclusioni}{12}
+\contentsline {section}{\numberline {4}Valutazione}{12}
+\contentsline {section}{\numberline {5}Conclusioni}{12}

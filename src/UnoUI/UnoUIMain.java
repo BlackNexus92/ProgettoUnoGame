@@ -33,6 +33,8 @@ public class UnoUIMain implements Screen {
     private Sprite bgSprite;
     private Sprite cardSprite;
     private Sprite topCardSprite;
+    private Sprite canPlaySprite;
+    private Sprite cannotPlaySprite;
 
     private BitmapFont pt22font;
     private GlyphLayout glyphLayout;
@@ -60,6 +62,9 @@ public class UnoUIMain implements Screen {
     private static final float cardW = 106;
     private static final float cardH = 160;
 
+    private static final float canPlayW = 128;
+    private static final float canPlayH = 128;
+
     private float delta;
     private float lastClick;
 
@@ -83,7 +88,15 @@ public class UnoUIMain implements Screen {
 
         topCardSprite = new Sprite(TextureLoader.getTopCardTexture());
         topCardSprite.setSize(topCardW, topCardH);
-        topCardSprite.setPosition(512 - topCardSprite.getWidth() / 2, 384 - topCardSprite.getHeight() / 2);
+        topCardSprite.setPosition(512 - topCardSprite.getWidth()/2, 384 - topCardSprite.getHeight()/2);
+
+        canPlaySprite = new Sprite(TextureLoader.loadCanPlayTexture());
+        canPlaySprite.setSize(canPlayW,canPlayH);
+        canPlaySprite.setPosition(1014-canPlaySprite.getWidth(),240);
+
+        cannotPlaySprite = new Sprite(TextureLoader.loadCannotPlayTexture());
+        cannotPlaySprite.setSize(canPlayW,canPlayH);
+        cannotPlaySprite.setPosition(1014-cannotPlaySprite.getWidth(),240);
 
         pt22font = TextureLoader.get22ptFont();
         glyphLayout = new GlyphLayout();
@@ -166,6 +179,10 @@ public class UnoUIMain implements Screen {
         pt22font.draw(batch,glyphLayout,512 - glyphLayout.width/2,230);
         setPlayerRing(batch,shaperenderer);
         topCardSprite.draw(batch);
+        if(Manager.getInstance().isPlaying())
+            canPlaySprite.draw(batch);
+        else
+            cannotPlaySprite.draw(batch);
         pt22font.setColor(1.0f,1.0f,1.0f,1.0f);
         batch.end();
         cardBox.drawAndAct(delta);

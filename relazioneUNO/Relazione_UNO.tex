@@ -249,13 +249,19 @@ Nel package UnoUI possiamo ritrovare la realizzazione dell'interfaccia di gioco.
 \end{itemize}
 
 \vspace{3mm}
+
+\section{Valutazione}
+Il gioco è stato sottoposto ad una serie di test, al fine di verificarne la tolleranza ai guasti. Secondo le specifiche, il gioco è in grado di tollerare fino ad \(n-1\) guasti, dove \(n\) rappresenta il numero di giocatori: in tale caso estremo, il giocatore rimanente viene automaticamente eletto vincitore della partita. \newline
+Negli altri casi, il sistema riesce a resistere ed adattarsi ai guasti. In particolare, si è provato a causare il crash di più giocatori consecutivi nell'anello, allo stesso tempo, nonché il crash del giocatore che attualmente detenesse il turno. In tutti questi casi, ed in altri guasti a catena oggetto di test, la topologia della rete viene automaticamente aggiornata, ed in caso di perdita del turno, questo viene passato al primo giocatore valido nel verso corrente di gioco. \newline
+Infine, grazie al sistema di numeri di sequenza progressivi, utilizzato nell'invio dello stato di gioco aggiornato, viene prevenuto l'insorgere di situazioni di incoerenza, in cui diversi giocatori disporrebbero di stati differenti di gioco.
+
 \section{Conclusioni}
-In questo documento, è stato descritta l'implementazione di una versione distribuita del gioco di carte UNO. Tramite la struttura ad anello e 
+In questo documento, è stata descritta l'implementazione di una versione distribuita del gioco di carte UNO. Tramite la struttura ad anello e 
 lo scambio dei messaggi, ogni giocatore è aggiornato in tempo reale sullo stato di gioco. 
 Inoltre, grazie alla gestione dei crash, ogni giocatore ancora connesso è in grado di continuare indisturbato
 la propria sessione di gioco fino al termine della partita. Sono state gestite anche situazioni di errore particolari, ad esempio quando ad abbandonare
 la partita è proprio il giocatore che possiede il turno. In tal caso, lo stato della partita non viene alterato e il gioco continua normalmente. 
-Riassumendo, l'applicazione è in grado di tollerare \emph{n-1} guasti (con \emph{n}=numero di giocatori). In questo modo, la partita rimane attiva finchè è 
+Riassumendo, l'applicazione è in grado di tollerare \emph{n-1} guasti, con \emph{n} uguale al numero di giocatori. In questo modo, la partita rimane attiva finchè è 
 connesso almeno un giocatore, il quale, però, sarà decretato vincitore della partita in quanto l'unico attivo nell'arena di gioco.\\
 Come possibile ulteriore sviluppo, si potrebbe migliorare l'interfaccia del pannello di registrazione.
 L'interfaccia grafica di gioco, invece, risulta essere piacevole e intuitiva e non richiede particolari raffinamenti.  
